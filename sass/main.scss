@@ -580,7 +580,6 @@ body {
 }
 .skills-grid-row {
   background-color: $color--grey;
-
   border-radius: 10rem;
   font-size: 1.8rem;
   box-shadow: 1px 1px 2px 1px #b9b9b9 inset;
@@ -588,7 +587,6 @@ body {
 }
 .skill span {
   color: $color--white;
-
   border-radius: 10rem;
   display: inline-block;
   height: 100%;
@@ -598,11 +596,6 @@ body {
 }
 .skill-animation {
   animation: fill 0.9s ease-in;
-}
-.skill--percentage-ninety-five {
-  width: 95%;
-  background-color: #006778;
-  position: relative;
 }
 
 @keyframes fill {
@@ -614,29 +607,56 @@ body {
   }
 }
 
-.skill--percentage-ninety {
-  width: 90%;
-  background-color: #733c3c;
+.skill--percentage-ninety-two {
+  width: 92%;
+  background-image: linear-gradient(to right bottom, #e7e9bb, #403b4a);
 }
+.skill--percentage-ninety-six {
+  width: 96%;
+}
+
 .skill--percentage-eighty-five {
   width: 85%;
-  background-color: #373b44;
+}
+.skill--percentage-eighty-six {
+  width: 86%;
+}
+.skill--percentage-eighty-two {
+  width: 82%;
 }
 .skill--percentage-eighty {
   width: 80%;
-  background-color: #ff9f43;
 }
+.skill--percentage-seventy-seven {
+  width: 77%;
+}
+.skill--percentage-seventy-eight {
+  width: 78%;
+}
+
 .skill--percentage-seventy-five {
   width: 75%;
-  background-color: #1dd1a1;
+}
+.skill--percentage-seventy-six {
+  width: 76%;
+}
+.skill--percentage-seventy-one {
+  width: 71%;
+}
+.skill--percentage-seventy-two {
+  width: 72%;
 }
 .skill--percentage-seventy {
   width: 70%;
-  background-color: #0abde3;
+}
+.skill--percentage-sixty-eight {
+  width: 68%;
 }
 .skill--percentage-sixty-five {
   width: 65%;
-  background-color: #5f27cd;
+}
+.skill--percentage-sixty-two {
+  width: 62%;
 }
 // Experience section
 .grid-columns {

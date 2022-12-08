@@ -11,8 +11,8 @@ html {
   overflow-x: hidden; }
 
 body {
-  font-family: "Open Sans", sans-serif;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #555; }
@@ -111,7 +111,7 @@ body {
   width: 3.2rem;
   color: #fff; }
 
-.icon-mobile-nav[name="close-icon"] {
+.icon-mobile-nav[name='close-icon'] {
   display: none; }
 
 .header__text-box {
@@ -296,40 +296,60 @@ body {
 .skill-animation {
   animation: fill 0.9s ease-in; }
 
-.skill--percentage-ninety-five {
-  width: 95%;
-  background-color: #006778;
-  position: relative; }
-
 @keyframes fill {
   0% {
     width: 0%; }
   90% {
     width: 90%; } }
 
-.skill--percentage-ninety {
-  width: 90%;
-  background-color: #733c3c; }
+.skill--percentage-ninety-two {
+  width: 92%;
+  background-image: linear-gradient(to right bottom, #e7e9bb, #403b4a); }
+
+.skill--percentage-ninety-six {
+  width: 96%; }
 
 .skill--percentage-eighty-five {
-  width: 85%;
-  background-color: #373b44; }
+  width: 85%; }
+
+.skill--percentage-eighty-six {
+  width: 86%; }
+
+.skill--percentage-eighty-two {
+  width: 82%; }
 
 .skill--percentage-eighty {
-  width: 80%;
-  background-color: #ff9f43; }
+  width: 80%; }
+
+.skill--percentage-seventy-seven {
+  width: 77%; }
+
+.skill--percentage-seventy-eight {
+  width: 78%; }
 
 .skill--percentage-seventy-five {
-  width: 75%;
-  background-color: #1dd1a1; }
+  width: 75%; }
+
+.skill--percentage-seventy-six {
+  width: 76%; }
+
+.skill--percentage-seventy-one {
+  width: 71%; }
+
+.skill--percentage-seventy-two {
+  width: 72%; }
 
 .skill--percentage-seventy {
-  width: 70%;
-  background-color: #0abde3; }
+  width: 70%; }
+
+.skill--percentage-sixty-eight {
+  width: 68%; }
 
 .skill--percentage-sixty-five {
-  width: 65%;
-  background-color: #5f27cd; }
+  width: 65%; }
+
+.skill--percentage-sixty-two {
+  width: 62%; }
 
 .grid-columns {
   font-size: 1.6rem;
@@ -374,7 +394,7 @@ body {
   left: -0.7rem; }
 
 .experience-spots::after {
-  content: "";
+  content: '';
   position: absolute;
   width: inherit;
   height: inherit;
@@ -385,7 +405,7 @@ body {
   left: -0.1rem; }
 
 .experience-spots::before {
-  content: "";
+  content: '';
   position: absolute;
   width: 1.5rem;
   height: 1rem;
@@ -604,20 +624,6 @@ h2 .ph-book-open {
     .card__side--back {
       background-color: green;
       transform: rotateY(-180deg); }
-      .card__side--back-1 {
-        background-image: linear-gradient(to right bottom, #4286f4, #373b44); }
-      .card__side--back-2 {
-        background-image: linear-gradient(to right bottom, #11998e, #38ef7d); }
-      .card__side--back-3 {
-        background-image: linear-gradient(to right bottom, #fc4a1a, #f7b733); }
-      .card__side--back-4 {
-        background-image: linear-gradient(to right bottom, #642b73, #c6426e); }
-      .card__side--back-5 {
-        background-image: linear-gradient(to right bottom, #30e8bf, #ff8235); }
-      .card__side--back-6 {
-        background-image: linear-gradient(to right bottom, #ee0979, #ff6a00); }
-      .card__side--back-7 {
-        background-image: linear-gradient(to right bottom, #004ff9, #fff94c); }
   .card:hover .card__side--front {
     transform: rotateY(180deg); }
   .card:hover .card__side--back {
@@ -628,20 +634,6 @@ h2 .ph-book-open {
     background-blend-mode: screen;
     -webkit-clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);
     clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%); }
-    .card__picture--1 {
-      background-image: linear-gradient(to right bottom, #4286f4, #373b44), url("../assets/ipod.jpg"); }
-    .card__picture--2 {
-      background-image: linear-gradient(to right bottom, #11998e, #38ef7d), url("../assets/pokemon.jpg"); }
-    .card__picture--3 {
-      background-image: linear-gradient(to right bottom, #fc4a1a, #f7b733), url("../assets/awesomefood.jpg"); }
-    .card__picture--4 {
-      background-image: linear-gradient(to right bottom, #642b73, #c6426e), url("../assets/recipe.jpg"); }
-    .card__picture--5 {
-      background-image: linear-gradient(to right bottom, #30e8bf, #ff8235), url("../assets/todo.jpg"); }
-    .card__picture--6 {
-      background-image: linear-gradient(to right bottom, #ee0979, #ff6a00), url("../assets/java.jpg"); }
-    .card__picture--7 {
-      background-image: linear-gradient(to right bottom, #004ff9, #fff94c), url("../assets/bankapp.jpg"); }
   .card__heading {
     font-size: 2.4rem;
     font-weight: 300;
@@ -655,20 +647,6 @@ h2 .ph-book-open {
     padding: 1.5rem 1.5rem;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone; }
-    .card__heading-span--1 {
-      background-image: linear-gradient(to right bottom, rgba(66, 134, 244, 0.85), rgba(55, 59, 68, 0.85)); }
-    .card__heading-span--2 {
-      background-image: linear-gradient(to right bottom, rgba(17, 153, 142, 0.85), rgba(56, 239, 125, 0.85)); }
-    .card__heading-span--3 {
-      background-image: linear-gradient(to right bottom, rgba(252, 74, 26, 0.85), rgba(247, 183, 51, 0.85)); }
-    .card__heading-span--4 {
-      background-image: linear-gradient(to right bottom, rgba(100, 43, 115, 0.85), rgba(198, 66, 110, 0.85)); }
-    .card__heading-span--5 {
-      background-image: linear-gradient(to right bottom, rgba(48, 232, 191, 0.85), rgba(255, 130, 53, 0.85)); }
-    .card__heading-span--6 {
-      background-image: linear-gradient(to right bottom, rgba(238, 9, 121, 0.85), rgba(255, 106, 0, 0.85)); }
-    .card__heading-span--7 {
-      background-image: linear-gradient(to right bottom, rgba(0, 79, 249, 0.85), rgba(255, 249, 76, 0.85)); }
   .card__details {
     padding: 3rem; }
     .card__details ul {
@@ -729,7 +707,7 @@ h2 .ph-book-open {
       background-color: #fff;
       transition: all 0.4s; }
   .btn--effect::after {
-    content: "";
+    content: '';
     display: inline-block;
     height: 100%;
     width: 100%;
@@ -776,7 +754,7 @@ h2 .ph-book-open {
       background-color: #000;
       transition: all 0.4s; }
   .btn--git::after {
-    content: "";
+    content: '';
     display: inline-block;
     height: 100%;
     width: 100%;
@@ -866,7 +844,7 @@ h2 .ph-book-open {
   left: 0;
   top: -0.4rem; }
   .form__radio-button::after {
-    content: "";
+    content: '';
     display: block;
     height: 1.3rem;
     width: 1.3rem;

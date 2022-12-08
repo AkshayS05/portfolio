@@ -140,7 +140,6 @@ const exp = document.getElementById('experience');
 const removeOverflow = (entries) => {
   const [entry] = entries;
   if (entry.isIntersecting) {
-    console.log('is intersecting');
     document.body.classList.remove('body-container');
   } else {
     document.body.classList.add('body-container');
@@ -151,6 +150,84 @@ const expSection = new IntersectionObserver(removeOverflow, {
   threshold: 0.2,
 });
 expSection.observe(exp);
+const allSkills = [
+  {
+    skillName: 'CSS',
+    totalValue: 'eighty-five',
+    colors: { color1: firstColorChoice[0], color2: secondColorChoice[0] },
+  },
+
+  {
+    skillName: 'JavaScript',
+    totalValue: 'seventy-seven',
+    colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
+  },
+  {
+    skillName: 'Node Js',
+    totalValue: 'sixty-eight',
+    colors: { color1: firstColorChoice[2], color2: secondColorChoice[2] },
+  },
+  {
+    skillName: 'Java',
+    totalValue: 'seventy-one',
+    colors: { color1: firstColorChoice[3], color2: secondColorChoice[3] },
+  },
+  {
+    skillName: 'React Js',
+    totalValue: 'eighty',
+    colors: { color1: firstColorChoice[4], color2: secondColorChoice[4] },
+  },
+  {
+    skillName: 'MongoDB',
+    totalValue: 'seventy',
+    colors: { color1: firstColorChoice[5], color2: secondColorChoice[5] },
+  },
+  {
+    skillName: 'MySQL',
+    totalValue: 'seventy-five',
+    colors: { color1: firstColorChoice[6], color2: secondColorChoice[6] },
+  },
+  {
+    skillName: 'Firebase',
+    totalValue: 'sixty-five',
+    colors: { color1: firstColorChoice[7], color2: secondColorChoice[7] },
+  },
+  {
+    skillName: 'Bootstrap',
+    totalValue: 'eighty-two',
+    colors: { color1: firstColorChoice[0], color2: secondColorChoice[0] },
+  },
+  {
+    skillName: 'Express Js',
+    totalValue: 'seventy-eight',
+    colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
+  },
+  {
+    skillName: 'Tailwind CSS',
+    totalValue: 'seventy-six',
+    colors: { color1: firstColorChoice[2], color2: secondColorChoice[2] },
+  },
+  {
+    skillName: 'Material UI',
+    totalValue: 'sixty-two',
+    colors: { color1: firstColorChoice[3], color2: secondColorChoice[3] },
+  },
+  {
+    skillName: 'EJS',
+    totalValue: 'eighty-six',
+    colors: { color1: firstColorChoice[4], color2: secondColorChoice[4] },
+  },
+  {
+    skillName: 'JSX',
+    totalValue: 'ninety-six',
+    colors: { color1: firstColorChoice[5], color2: secondColorChoice[5] },
+  },
+  {
+    skillName: 'SEO',
+    totalValue: 'seventy-two',
+    colors: { color1: firstColorChoice[6], color2: secondColorChoice[6] },
+  },
+];
 ///Cards component
 const projects = [
   {
@@ -274,9 +351,23 @@ const projects = [
     githubLink: 'https://github.com/AkshayS05/dicegame',
   },
 ];
+// skills section
 
+const skillsSection = document.querySelector('.skills-grid');
+allSkills.map((skill, i) => {
+  const html = `<div class="skills-grid-row skill">
+<span class="skill--percentage-${skill.totalValue} animate__skill">${skill.skillName}</span>
+</div>`;
+  skillsSection.insertAdjacentHTML('beforeend', html);
+});
+for (let i = 0; i < allSkills.length; i++) {
+  const singleSkill = document.querySelector(
+    `.skill--percentage-${allSkills[i].totalValue}`,
+  );
+  singleSkill.style.backgroundImage = `linear-gradient(to right bottom,${allSkills[i].colors.color1} , ${allSkills[i].colors.color2})`;
+}
+// portfolio
 const elem = document.querySelector('.slider');
-
 projects.map((project, i) => {
   const html = `
 <div class="slide">
@@ -332,14 +423,7 @@ for (i = 0; i < projects.length; i++) {
 
   // setting up front image
   const cardPicture = document.querySelector(`.card__picture--${i}`);
-
-  cardPicture.style.backgroundImage =
-    // i < firstColorChoice.length?
-    `linear-gradient(to right bottom,${projects[i].colors.color1} , ${projects[i].colors.color2}),url(${projects[i].img})`;
-  //     : console.log('working when', i);
-  // `inear-gradient(to right bottom,${
-  //   firstColorChoice[projects.length - i + 1]
-  // } , ${secondColorChoice[projects.length - i + 1]}),url(${projects[i].img})`;
+  cardPicture.style.backgroundImage = `linear-gradient(to right bottom,${projects[i].colors.color1} , ${projects[i].colors.color2}),url(${projects[i].img})`;
 
   // setting up background color
   const card1 = document.querySelector(`.card__side--back-${i}`);
@@ -348,11 +432,6 @@ for (i = 0; i < projects.length; i++) {
     `linear-gradient(to right bottom,
         ${projects[i].colors.color1} , ${projects[i].colors.color2}
       )`;
-  console.log(i);
-  //     : `linear-gradient(to right bottom,
-  //       ${firstColorChoice[projects.length - i + 1]},
-  //         ${secondColorChoice[projects.length - i + 1]}
-  // )`;
 }
 const slides = document.querySelectorAll('.slide');
 const btnLeft = document.querySelector('.slider__btn--left');
@@ -365,8 +444,6 @@ const moveSlide = function (slide) {
     (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%`),
   );
 };
-// slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
-// in order to provide the desired positions to the slides we will pass 0 to the moveslide function, which will result in 0% 100%, 200%
 moveSlide(0);
 const moveAhead = function () {
   if (currSlide === maxSlides - 1) {
