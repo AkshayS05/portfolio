@@ -1,5 +1,20 @@
 //sticky navigation
 const sectionHeroElem = document.querySelector('.particles');
+const particles = document.querySelector('#particles-js');
+const nav = document.querySelector('.main-nav-list');
+const navLinks = document.querySelectorAll('.main-nav-link');
+// toggle-btn
+const toggle = document.getElementById('toggle');
+const toggleBtn = document.querySelector('.toggle-btn');
+const allSections = document.querySelectorAll('.section');
+const toggleBackground = document.querySelector('.theme-color');
+const toggleDark = document.querySelector('.dark-theme-color');
+const btnContainer = document.querySelector('.btn-mobile-nav');
+const icon = document.querySelectorAll('.icon-mobile-nav');
+const header = document.querySelector('header');
+const contactSection = document.querySelector('.section-contact');
+const contactSectionHeading = document.querySelector('.contact__heading');
+
 // color for cards
 const firstColorChoice = [
   '#1a3662',
@@ -21,6 +36,45 @@ const secondColorChoice = [
   '#fff94c',
   '#E7E9BB',
 ];
+
+if (
+  localStorage.getItem('getDarkTheme') === null ||
+  localStorage.getItem('getDarkTheme') === undefined
+) {
+  localStorage.getItem('getDarkTheme', 'false');
+}
+// handleColorTheme();
+// toggle implementation
+function handleColorTheme() {
+  // e.preventDefault();
+
+  // toggleBtn.classList.toggle('onToggle');
+  if (localStorage.getItem('getDarkTheme') === 'true') {
+    toggleBtn.classList.add('onToggle');
+    toggleBackground.classList.add('toggleBackground');
+    particles.classList.add('toggleBackgroundLight');
+    header.style.backgroundImage =
+      'linear-gradient(to bottom right, #484f5a, #222)';
+    contactSection.style.backgroundImage =
+      'linear-gradient(to bottom right, #484f5a, #222)';
+    contactSectionHeading.classList.add('toggle-dark');
+    toggleDark.classList.add('toggle-dark');
+    localStorage.setItem('getDarkTheme', 'false');
+  } else {
+    toggleBtn.classList.remove('onToggle');
+    particles.classList.remove('toggleBackgroundLight');
+    toggleBackground.classList.remove('toggleBackground');
+    toggleDark.classList.remove('toggle-dark');
+    header.style.backgroundImage =
+      'linear-gradient(to bottom right, #373b44, #4286f4)';
+    contactSection.style.backgroundImage =
+      'linear-gradient(to right bottom, #4286f4, #373b44)';
+    localStorage.setItem('getDarkTheme', 'true');
+  }
+}
+toggle.addEventListener('click', handleColorTheme);
+console.log(localStorage.getItem('getDarkTheme'));
+
 //intersection observer
 const observer = new IntersectionObserver(
   function (entries) {
@@ -59,8 +113,6 @@ tabContainer.addEventListener('click', function (e) {
     .classList.add('operations__content--active');
 });
 //implementing page navigation
-const nav = document.querySelector('.main-nav-list');
-const navLinks = document.querySelectorAll('.main-nav-link');
 
 nav.addEventListener('click', function (e) {
   e.preventDefault();
@@ -70,7 +122,7 @@ nav.addEventListener('click', function (e) {
   }
 });
 // Revealing sections
-const allSections = document.querySelectorAll('.section');
+
 const revealSection = function (entries, observer) {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
@@ -122,10 +174,7 @@ const skillSection = new IntersectionObserver(animateSkills, {
 });
 skill.forEach((s) => skillSection.observe(s));
 // Mobile Navigation
-const btnContainer = document.querySelector('.btn-mobile-nav');
 
-const icon = document.querySelectorAll('.icon-mobile-nav');
-const header = document.querySelector('header');
 btnContainer.addEventListener('click', function (e) {
   header.classList.toggle('nav-open');
 });
@@ -241,14 +290,14 @@ const projects = [
     githubLink: 'https://github.com/AkshayS05/Ipod-project-in-react',
   },
   {
-    title: 'FilmpyPire',
-    img: './assets/FilmpyPire.jpg',
+    title: 'MovieNation',
+    img: './assets/movienation_img.jpg',
     list: ['ReactJs', 'RestAPIs', 'MaterialUI', 'Voice AI'],
     colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
     backTitle: 'Project Using',
     backPara: 'React',
-    liveLink: 'https://filmpirebyakshays.netlify.app/',
-    githubLink: 'https://github.com/AkshayS05/filmpire-Akshaysharma',
+    liveLink: 'https://movienationapp.netlify.app/',
+    githubLink: 'https://github.com/AkshayS05/MovieNation-Akshaysharma',
   },
   {
     title: 'Blog Social',

@@ -11,7 +11,7 @@
   "description": "portfolio ",
   "main": "index.js",
   "scripts": {
-    "compile:sass": "node-sass sass/main.scss css/style.css",
+    "compile:sass": "node-sass sass/main.scss css/style.css -w",
     "compile:querysass": "node-sass sass/queries.scss css/query.css -w"
   },
   "author": "akshay",
