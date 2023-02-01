@@ -386,7 +386,6 @@ for (let i = 0; i < allSkills.length; i++) {
 }
 // portfolio
 projects.map((project, i) => {
-//  let themeColor = localStorage.getItem("PageThemeDarkActive");
   const html = `
 <div class="slide">
   <div class="col-${i}">
@@ -442,16 +441,14 @@ function handleColorTheme() {
   for(let i=0; i<cardFront.length; i++){
 
     cardFront[i].classList.toggle('card__side--front--dark');
-  }
+  };
+
   toggleBackground.classList.toggle('toggleBackground');
       particles.classList.toggle('toggleBackgroundLight');
       particlesTheme.classList.toggle('toggle-dark');
-      
-      // sectionHeroElem.style.backgroundImage='linear-gradient(to top right, #222, #0d0d0e)';
       sectionHeroElem.classList.toggle('particles-dark');
       header.classList.toggle('header_contact_dark');
       contactSection.classList.toggle('header_contact_dark');
-  
       contactSectionHeading.classList.add('toggle-dark');
       toggleDark.classList.toggle('toggle-dark');
       cardActiveClass='card__side--front--dark';
@@ -466,13 +463,9 @@ function handleColorTheme() {
   }
   
   localStorage.setItem('PageTheme',JSON.stringify(theme));
-  localStorage.setItem('PageThemeDarkActive',JSON.stringify(isDarkThemeActive));
-
   };
  
   let GetTheme = JSON.parse(localStorage.getItem('PageTheme'));
-  let GetActiveTheme = JSON.parse(localStorage.getItem('PageThemeDarkActive'));
-
 
   if(GetTheme ==='Dark'){
       toggleBtn.classList.add('onToggle');
@@ -480,10 +473,8 @@ function handleColorTheme() {
         particles.classList.add('toggleBackgroundLight');
         particlesTheme.classList.add('toggle-dark');
         sectionHeroElem.classList.toggle('particles-dark');
-        header.style.backgroundImage =
-          'linear-gradient(to bottom right, #484f5a, #222)';
-        contactSection.style.backgroundImage =
-          'linear-gradient(to bottom right, #484f5a, #222)';
+        header.classList.toggle('header_contact_dark');
+        contactSection.classList.toggle('header_contact_dark');
         contactSectionHeading.classList.add('toggle-dark');
         toggleDark.classList.add('toggle-dark');
         isDarkThemeActive = 'card__side card__side--front--dark';
