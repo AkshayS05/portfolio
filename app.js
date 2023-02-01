@@ -7,13 +7,17 @@ const navLinks = document.querySelectorAll('.main-nav-link');
 const toggle = document.getElementById('toggle');
 const toggleBtn = document.querySelector('.toggle-btn');
 const allSections = document.querySelectorAll('.section');
+
 const toggleBackground = document.querySelector('.theme-color');
 const toggleDark = document.querySelector('.dark-theme-color');
+const particlesTheme = document.querySelector('.background__header');
 const btnContainer = document.querySelector('.btn-mobile-nav');
 const icon = document.querySelectorAll('.icon-mobile-nav');
 const header = document.querySelector('header');
 const contactSection = document.querySelector('.section-contact');
 const contactSectionHeading = document.querySelector('.contact__heading');
+const elem = document.querySelector('.slider');
+
 
 // color for cards
 const firstColorChoice = [
@@ -37,44 +41,9 @@ const secondColorChoice = [
   '#E7E9BB',
 ];
 
-if (
-  localStorage.getItem('getDarkTheme') === null ||
-  localStorage.getItem('getDarkTheme') === undefined
-) {
-  localStorage.getItem('getDarkTheme', 'false');
-}
-// handleColorTheme();
-// toggle implementation
-function handleColorTheme() {
-  // e.preventDefault();
 
-  // toggleBtn.classList.toggle('onToggle');
-  if (localStorage.getItem('getDarkTheme') === 'true') {
-    toggleBtn.classList.add('onToggle');
-    toggleBackground.classList.add('toggleBackground');
-    particles.classList.add('toggleBackgroundLight');
-    header.style.backgroundImage =
-      'linear-gradient(to bottom right, #484f5a, #222)';
-    contactSection.style.backgroundImage =
-      'linear-gradient(to bottom right, #484f5a, #222)';
-    contactSectionHeading.classList.add('toggle-dark');
-    toggleDark.classList.add('toggle-dark');
-    localStorage.setItem('getDarkTheme', 'false');
-  } else {
-    toggleBtn.classList.remove('onToggle');
-    particles.classList.remove('toggleBackgroundLight');
-    toggleBackground.classList.remove('toggleBackground');
-    toggleDark.classList.remove('toggle-dark');
-    header.style.backgroundImage =
-      'linear-gradient(to bottom right, #373b44, #4286f4)';
-    contactSection.style.backgroundImage =
-      'linear-gradient(to right bottom, #4286f4, #373b44)';
-    localStorage.setItem('getDarkTheme', 'true');
-  }
-}
-toggle.addEventListener('click', handleColorTheme);
-console.log(localStorage.getItem('getDarkTheme'));
 
+    
 //intersection observer
 const observer = new IntersectionObserver(
   function (entries) {
@@ -400,8 +369,8 @@ const projects = [
     githubLink: 'https://github.com/AkshayS05/dicegame',
   },
 ];
-// skills section
 
+// skills section
 const skillsSection = document.querySelector('.skills-grid');
 allSkills.map((skill, i) => {
   const html = `<div class="skills-grid-row skill">
@@ -416,13 +385,13 @@ for (let i = 0; i < allSkills.length; i++) {
   singleSkill.style.backgroundImage = `linear-gradient(to right bottom,${allSkills[i].colors.color1} , ${allSkills[i].colors.color2})`;
 }
 // portfolio
-const elem = document.querySelector('.slider');
 projects.map((project, i) => {
+//  let themeColor = localStorage.getItem("PageThemeDarkActive");
   const html = `
 <div class="slide">
   <div class="col-${i}">
     <div class="card">
-      <div class="card__side card__side--front">
+      <div class="card__side">
         <div class="card__picture card__picture--${i}">&nbsp;</div>
 
         <h4 class="card__heading">
@@ -461,6 +430,77 @@ projects.map((project, i) => {
   elem.insertAdjacentHTML('beforeend', html);
 });
 
+const allCards = document.querySelectorAll('.card');
+let cardFront = document.querySelectorAll('.card__side');
+
+// to set dark theme
+
+function handleColorTheme() {
+  let isDarkThemeActive;
+  toggleBtn.classList.toggle('onToggle');
+
+  for(let i=0; i<cardFront.length; i++){
+
+    cardFront[i].classList.toggle('card__side--front--dark');
+  }
+  toggleBackground.classList.toggle('toggleBackground');
+      particles.classList.toggle('toggleBackgroundLight');
+      particlesTheme.classList.toggle('toggle-dark');
+      
+      // sectionHeroElem.style.backgroundImage='linear-gradient(to top right, #222, #0d0d0e)';
+      sectionHeroElem.classList.toggle('particles-dark');
+      header.classList.toggle('header_contact_dark');
+      contactSection.classList.toggle('header_contact_dark');
+  
+      contactSectionHeading.classList.add('toggle-dark');
+      toggleDark.classList.toggle('toggle-dark');
+      cardActiveClass='card__side--front--dark';
+  
+  if(toggleBtn.classList.contains('onToggle')){ 
+    theme ='Dark';
+    isDarkThemeActive = 'card__side card__side--front--dark';
+    
+  }else{
+    theme =  'Light';
+    isDarkThemeActive = 'card__side card__side--front';
+  }
+  
+  localStorage.setItem('PageTheme',JSON.stringify(theme));
+  localStorage.setItem('PageThemeDarkActive',JSON.stringify(isDarkThemeActive));
+
+  };
+ 
+  let GetTheme = JSON.parse(localStorage.getItem('PageTheme'));
+  let GetActiveTheme = JSON.parse(localStorage.getItem('PageThemeDarkActive'));
+
+
+  if(GetTheme ==='Dark'){
+      toggleBtn.classList.add('onToggle');
+        toggleBackground.classList.add('toggleBackground');
+        particles.classList.add('toggleBackgroundLight');
+        particlesTheme.classList.add('toggle-dark');
+        sectionHeroElem.classList.toggle('particles-dark');
+        header.style.backgroundImage =
+          'linear-gradient(to bottom right, #484f5a, #222)';
+        contactSection.style.backgroundImage =
+          'linear-gradient(to bottom right, #484f5a, #222)';
+        contactSectionHeading.classList.add('toggle-dark');
+        toggleDark.classList.add('toggle-dark');
+        isDarkThemeActive = 'card__side card__side--front--dark';
+        for(let i=0; i<cardFront.length; i++){
+
+          cardFront[i].classList.toggle('card__side--front--dark');
+        }
+    }else{
+      for(let i=0; i<cardFront.length; i++){
+
+        cardFront[i].classList.toggle('card__side--front');
+      };
+    };
+
+
+  
+  toggle.addEventListener('click', handleColorTheme);
 // to set background image
 let projectsCount = 0;
 let i;

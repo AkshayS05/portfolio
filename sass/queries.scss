@@ -185,11 +185,12 @@ $color--lightblue: #1a3662;
   // .header {
   //   overflow: hidden;
   // }
+  
   .card {
     height: auto;
     border-radius: 4px;
     width: 100%;
-    background-color: $color--white;
+    // background-color: $color--white;
     position: relative;
     box-shadow: 0 1.5rem 4rem rgba($color--black, 0.15);
 
@@ -254,11 +255,7 @@ $color--lightblue: #1a3662;
       font-size: 1.2rem;
     }
   }
-  .about {
-    &-profile--pic {
-      // margin-left: -1rem;
-    }
-  }
+  
   .operations {
     max-width: 80rem;
   }

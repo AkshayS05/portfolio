@@ -72,6 +72,7 @@ body {
   display: inline-block;
   font-size: 3.4rem;
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
 
   margin-bottom: 4.8rem;
@@ -86,6 +87,7 @@ body {
   display: inline-block;
   font-size: 3rem;
   -webkit-background-clip: text;
+  background-clip: text;
   color: $color--white;
   margin-bottom: 4.8rem;
 }
@@ -225,32 +227,6 @@ body {
   justify-content: space-between;
   height: 9.6rem;
   padding: 0 4.8rem;
-}
-#toggle {
-  height: 2rem;
-  width: 4rem;
-  border: 1px solid black;
-  border-radius: 10rem;
-}
-.toggle-btn {
-  width: 2rem;
-  height: 2rem;
-  background-color: #000;
-  border-radius: 10rem;
-}
-.onToggle {
-  margin-left: 2rem;
-}
-.toggleBackground {
-  background-color: #000;
-  color: #fff;
-}
-.toggleBackgroundLight {
-  background-color: #222;
-  color: #fff;
-}
-.toggle-dark {
-  color: #000;
 }
 
 .main-nav {
@@ -870,6 +846,7 @@ h2 .ph-book-open {
     overflow: hidden;
     &--front {
       background-color: #fff;
+      color: $color--black;
     }
     &--back {
       background-color: green;
@@ -1229,4 +1206,49 @@ h2 .ph-book-open {
 // only live or github ones
 .btn-deactivate {
   pointer-events: none;
+}
+#toggle {
+  height: 2rem;
+  width: 4rem;
+  border: 1px solid black;
+  border-radius: 10rem;
+}
+.toggle-btn {
+  width: 2rem;
+  height: 2rem;
+  background-color: #000;
+  border-radius: 10rem;
+}
+.onToggle {
+  margin-left: 2rem;
+}
+.toggleBackground {
+  background-color: #000;
+  color: #fff;
+}
+.toggleBackgroundLight {
+  background-color: #222;
+  color: #fff;
+}
+.toggle-dark {
+  color: #000;
+}
+.particles-dark {
+  background-image: linear-gradient(to top right, #373b44, #59595a)
+}
+.card_dark {
+  background-color: $color-grey-dark;
+}
+.card__side--front--dark {
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
+  background-color: black;
+  color: $color--white;
+}
+.header_contact_dark {
+  background-image: linear-gradient(to bottom right, #484f5a, #222);
+}
+.card--dark{
+  color: $color--white;
 }
