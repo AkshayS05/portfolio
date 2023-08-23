@@ -1,93 +1,89 @@
 //sticky navigation
-const sectionHeroElem = document.querySelector('.particles');
-const particles = document.querySelector('#particles-js');
-const nav = document.querySelector('.main-nav-list');
-const navLinks = document.querySelectorAll('.main-nav-link');
+const sectionHeroElem = document.querySelector(".particles");
+const particles = document.querySelector("#particles-js");
+const nav = document.querySelector(".main-nav-list");
+const navLinks = document.querySelectorAll(".main-nav-link");
 // toggle-btn
-const toggle = document.getElementById('toggle');
-const toggleBtn = document.querySelector('.toggle-btn');
-const allSections = document.querySelectorAll('.section');
+const toggle = document.getElementById("toggle");
+const toggleBtn = document.querySelector(".toggle-btn");
+const allSections = document.querySelectorAll(".section");
 
-const toggleBackground = document.querySelector('.theme-color');
-const toggleDark = document.querySelector('.dark-theme-color');
-const particlesTheme = document.querySelector('.background__header');
-const btnContainer = document.querySelector('.btn-mobile-nav');
-const icon = document.querySelectorAll('.icon-mobile-nav');
-const header = document.querySelector('header');
-const contactSection = document.querySelector('.section-contact');
-const contactSectionHeading = document.querySelector('.contact__heading');
-const elem = document.querySelector('.slider');
-
+const toggleBackground = document.querySelector(".theme-color");
+const toggleDark = document.querySelector(".dark-theme-color");
+const particlesTheme = document.querySelector(".background__header");
+const btnContainer = document.querySelector(".btn-mobile-nav");
+const icon = document.querySelectorAll(".icon-mobile-nav");
+const header = document.querySelector("header");
+const contactSection = document.querySelector(".section-contact");
+const contactSectionHeading = document.querySelector(".contact__heading");
+const elem = document.querySelector(".slider");
 
 // color for cards
 const firstColorChoice = [
-  '#1a3662',
-  '#11998e',
-  '#fc4a1a',
-  '#642b73',
-  '#30e8bf',
-  '#ee0979',
-  '#004ff9',
-  '#403B4A',
+  "#1a3662",
+  "#11998e",
+  "#fc4a1a",
+  "#642b73",
+  "#30e8bf",
+  "#ee0979",
+  "#004ff9",
+  "#403B4A",
 ];
 const secondColorChoice = [
-  '#3b79dc',
-  '#38ef7d',
-  '#f7b733',
-  '#c6426e',
-  '#ff8235',
-  '#ff6a00',
-  '#fff94c',
-  '#E7E9BB',
+  "#3b79dc",
+  "#38ef7d",
+  "#f7b733",
+  "#c6426e",
+  "#ff8235",
+  "#ff6a00",
+  "#fff94c",
+  "#E7E9BB",
 ];
 
-
-
-    
 //intersection observer
 const observer = new IntersectionObserver(
   function (entries) {
     const ent = entries[0];
     if (!ent.isIntersecting) {
-      document.body.classList.add('sticky');
+      document.body.classList.add("sticky");
     }
     if (ent.isIntersecting) {
-      document.body.classList.remove('sticky');
+      document.body.classList.remove("sticky");
     }
   },
   {
     root: null,
     threshold: 0,
-    rootMargin: '-200px',
-  },
+    rootMargin: "-200px",
+  }
 );
 observer.observe(sectionHeroElem);
 //Tabbed component
-const tabContainer = document.querySelector('.operations__tab-container');
-const tabs = document.querySelectorAll('.operations__tab');
-const tabContent = document.querySelectorAll('.operations__content');
+const tabContainer = document.querySelector(".operations__tab-container");
+const tabs = document.querySelectorAll(".operations__tab");
+const tabContent = document.querySelectorAll(".operations__content");
 
-tabContainer.addEventListener('click', function (e) {
-  const element = e.target.closest('.operations__tab');
+tabContainer.addEventListener("click", function (e) {
+  const element = e.target.closest(".operations__tab");
   if (!element) return;
   tabs.forEach(function (tab) {
-    tab.classList.remove('operations__tab--active');
+    tab.classList.remove("operations__tab--active");
   });
   tabContent.forEach(function (content) {
-    content.classList.remove('operations__content--active');
+    content.classList.remove("operations__content--active");
   });
-  element.classList.add('operations__tab--active');
+  element.classList.add("operations__tab--active");
   document
     .querySelector(`.operations__content--${element.dataset.tab}`)
-    .classList.add('operations__content--active');
+    .classList.add("operations__content--active");
 });
 //implementing page navigation
 
-nav.addEventListener('click', function (e) {
+nav.addEventListener("click", function (e) {
   e.preventDefault();
-  if (e.target.classList.contains('main-nav-link')) {
-    const id = e.target.getAttribute('href');
-    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  if (e.target.classList.contains("main-nav-link")) {
+    const id = e.target.getAttribute("href");
+    document.querySelector(id).scrollIntoView({ behavior: "smooth" });
   }
 });
 // Revealing sections
@@ -95,7 +91,7 @@ nav.addEventListener('click', function (e) {
 const revealSection = function (entries, observer) {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
-    entry.target.classList.remove('section--hidden');
+    entry.target.classList.remove("section--hidden");
     observer.unobserve(entry.target);
   });
 };
@@ -105,36 +101,36 @@ const sectionObserver = new IntersectionObserver(revealSection, {
 });
 allSections.forEach((section) => {
   sectionObserver.observe(section);
-  section.classList.add('section--hidden');
+  section.classList.add("section--hidden");
 });
 //lazy image
-const img = document.querySelectorAll('img[data-src]');
+const img = document.querySelectorAll("img[data-src]");
 const revealImage = function (entries, observer) {
   const [entry] = entries;
   if (!entry.isIntersecting) return;
   entry.target.src = entry.target.dataset.src;
 
-  entry.target.addEventListener('load', function () {
-    entry.target.classList.remove('lazy-img');
+  entry.target.addEventListener("load", function () {
+    entry.target.classList.remove("lazy-img");
   });
   observer.unobserve(entry.target);
 };
 const imgObserver = new IntersectionObserver(revealImage, {
   root: null,
   threshold: 0,
-  rootMargin: '200px',
+  rootMargin: "200px",
 });
 img.forEach((i) => imgObserver.observe(i));
 // skills section animation
-const skills = document.querySelector('.skills-grid');
-const skill = document.querySelectorAll('.skills-grid-row');
+const skills = document.querySelector(".skills-grid");
+const skill = document.querySelectorAll(".skills-grid-row");
 
 const animateSkills = function (entries, observer) {
   const [entry] = entries;
   if (!entry.isIntersecting) return;
-  const id = skills.querySelectorAll('.animate__skill');
+  const id = skills.querySelectorAll(".animate__skill");
 
-  id.forEach((i) => i.classList.add('skill-animation'));
+  id.forEach((i) => i.classList.add("skill-animation"));
   observer.unobserve(entry.target);
 };
 const skillSection = new IntersectionObserver(animateSkills, {
@@ -144,23 +140,23 @@ const skillSection = new IntersectionObserver(animateSkills, {
 skill.forEach((s) => skillSection.observe(s));
 // Mobile Navigation
 
-btnContainer.addEventListener('click', function (e) {
-  header.classList.toggle('nav-open');
+btnContainer.addEventListener("click", function (e) {
+  header.classList.toggle("nav-open");
 });
-nav.addEventListener('click', function (e) {
-  if (e.target.classList.contains('main-nav-link')) {
-    header.classList.toggle('nav-open');
+nav.addEventListener("click", function (e) {
+  if (e.target.classList.contains("main-nav-link")) {
+    header.classList.toggle("nav-open");
   }
 });
 // experience section position
-const exp = document.getElementById('experience');
+const exp = document.getElementById("experience");
 
 const removeOverflow = (entries) => {
   const [entry] = entries;
   if (entry.isIntersecting) {
-    document.body.classList.remove('body-container');
+    document.body.classList.remove("body-container");
   } else {
-    document.body.classList.add('body-container');
+    document.body.classList.add("body-container");
   }
 };
 const expSection = new IntersectionObserver(removeOverflow, {
@@ -168,219 +164,271 @@ const expSection = new IntersectionObserver(removeOverflow, {
   threshold: 0.2,
 });
 expSection.observe(exp);
+
 const allSkills = [
   {
-    skillName: 'CSS',
-    totalValue: 'eighty-five',
+    skillName: "CSS",
+    totalValue: "eighty-five",
     colors: { color1: firstColorChoice[0], color2: secondColorChoice[0] },
   },
 
   {
-    skillName: 'JavaScript',
-    totalValue: 'seventy-seven',
+    skillName: "JavaScript",
+    totalValue: "seventy-seven",
     colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
   },
+
   {
-    skillName: 'Node Js',
-    totalValue: 'sixty-eight',
+    skillName: "Node Js",
+    totalValue: "sixty-eight",
     colors: { color1: firstColorChoice[2], color2: secondColorChoice[2] },
   },
   {
-    skillName: 'Java',
-    totalValue: 'seventy-one',
+    skillName: "Java",
+    totalValue: "seventy-one",
     colors: { color1: firstColorChoice[3], color2: secondColorChoice[3] },
   },
   {
-    skillName: 'React Js',
-    totalValue: 'eighty',
+    skillName: "React Js",
+    totalValue: "eighty",
     colors: { color1: firstColorChoice[4], color2: secondColorChoice[4] },
   },
   {
-    skillName: 'MongoDB',
-    totalValue: 'seventy',
+    skillName: "MongoDB",
+    totalValue: "seventy",
     colors: { color1: firstColorChoice[5], color2: secondColorChoice[5] },
   },
   {
-    skillName: 'MySQL',
-    totalValue: 'seventy-five',
+    skillName: "MySQL",
+    totalValue: "seventy-five",
     colors: { color1: firstColorChoice[6], color2: secondColorChoice[6] },
   },
   {
-    skillName: 'Firebase',
-    totalValue: 'sixty-five',
+    skillName: "Firebase",
+    totalValue: "sixty-five",
     colors: { color1: firstColorChoice[7], color2: secondColorChoice[7] },
   },
   {
-    skillName: 'Bootstrap',
-    totalValue: 'eighty-two',
+    skillName: "Bootstrap",
+    totalValue: "eighty-two",
     colors: { color1: firstColorChoice[0], color2: secondColorChoice[0] },
   },
   {
-    skillName: 'Express Js',
-    totalValue: 'seventy-eight',
+    skillName: "Express Js",
+    totalValue: "seventy-eight",
     colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
   },
   {
-    skillName: 'Tailwind CSS',
-    totalValue: 'seventy-six',
+    skillName: "Tailwind CSS",
+    totalValue: "seventy-six",
     colors: { color1: firstColorChoice[2], color2: secondColorChoice[2] },
   },
   {
-    skillName: 'Material UI',
-    totalValue: 'sixty-two',
+    skillName: "Material UI",
+    totalValue: "sixty-two",
     colors: { color1: firstColorChoice[3], color2: secondColorChoice[3] },
   },
   {
-    skillName: 'EJS',
-    totalValue: 'eighty-six',
+    skillName: "EJS",
+    totalValue: "eighty-six",
     colors: { color1: firstColorChoice[4], color2: secondColorChoice[4] },
   },
   {
-    skillName: 'JSX',
-    totalValue: 'ninety-six',
+    skillName: "JSX",
+    totalValue: "ninety-six",
     colors: { color1: firstColorChoice[5], color2: secondColorChoice[5] },
   },
   {
-    skillName: 'SEO',
-    totalValue: 'seventy-two',
+    skillName: "SEO",
+    totalValue: "seventy-two",
     colors: { color1: firstColorChoice[6], color2: secondColorChoice[6] },
   },
 ];
 ///Cards component
 const projects = [
   {
-    title: 'The Ipod Project',
-    img: './assets/ipod.jpg',
-    list: ['ReactJs', 'JSX', 'CSS', 'JavaScript'],
+    title: "MovieNation",
+    img: "./assets/MovieNation.jpg",
+    list: ["ReactJs", "JSX", "MaterialUI", "JavaScript"],
+    colors: { color1: firstColorChoice[4], color2: secondColorChoice[3] },
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://movienationapp.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/MovieNation-Akshaysharma",
+  },
+  {
+    title: "Doughlicious",
+    img: "./assets/doughlicious.jpg",
+    list: ["ReactJs", "JSX", "Tailwind", "JavaScript"],
+    colors: { color1: firstColorChoice[3], color2: secondColorChoice[0] },
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://doughlicious.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/doughlicious",
+  },
+  {
+    title: "ToDoNest",
+    img: "./assets/todonest.jpg",
+    list: ["ReactJs", "JSX", "CSS", "TypeScript"],
+    colors: { color1: firstColorChoice[1], color2: secondColorChoice[4] },
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://todonestbyakshay.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/ToDONest",
+  },
+  {
+    title: "QuizUpReact",
+    img: "./assets/quizup.jpg",
+    list: ["ReactJs", "JSX", "CSS", "JavaScript"],
+    colors: { color1: firstColorChoice[3], color2: secondColorChoice[2] },
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://quizupreact.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/QuizUp-React",
+  },
+  {
+    title: "The Ipod Project",
+    img: "./assets/ipod.jpg",
+    list: ["ReactJs", "JSX", "CSS", "JavaScript"],
     colors: { color1: firstColorChoice[0], color2: secondColorChoice[0] },
-    backTitle: 'Project Using',
-    backPara: 'React',
-    liveLink: 'https://ipodbyakshays05.netlify.app/',
-    githubLink: 'https://github.com/AkshayS05/Ipod-project-in-react',
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://ipodbyakshays05.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/Ipod-project-in-react",
   },
   {
-    title: 'MovieNation',
-    img: './assets/movienation_img.jpg',
-    list: ['ReactJs', 'RestAPIs', 'MaterialUI', 'Voice AI'],
+    title: "SplitBites",
+    img: "./assets/SplitBites.jpg",
+    list: ["ReactJs", "JSX", "CSS", "JavaScript"],
+    colors: { color1: firstColorChoice[3], color2: secondColorChoice[0] },
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://splitbites.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/splitbites",
+  },
+  {
+    title: "MovieNation",
+    img: "./assets/movienation_img.jpg",
+    list: ["ReactJs", "RestAPIs", "MaterialUI", "Voice AI"],
     colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
-    backTitle: 'Project Using',
-    backPara: 'React',
-    liveLink: 'https://movienationapp.netlify.app/',
-    githubLink: 'https://github.com/AkshayS05/MovieNation-Akshaysharma',
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://movienationapp.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/MovieNation-Akshaysharma",
   },
   {
-    title: 'Blog Social',
-    img: './assets/blog_social.jpg',
-    list: ['MongoDB', 'NodeJs', 'Express Js', 'React Js'],
+    title: "Blog Social",
+    img: "./assets/blog_social.jpg",
+    list: ["MongoDB", "NodeJs", "Express Js", "React Js"],
     colors: { color1: firstColorChoice[5], color2: secondColorChoice[5] },
-    backTitle: 'Project Using',
-    backPara: 'MERN Stack',
-    liveLink: '#',
-    githubLink: 'https://github.com/AkshayS05/blogsocial',
+    backTitle: "Project Using",
+    backPara: "MERN Stack",
+    liveLink: "#",
+    githubLink: "https://github.com/AkshayS05/blogsocial",
   },
   {
-    title: 'The Pokemon Project',
-    img: './assets/pokemon.jpg',
-    list: ['ReactJs', 'JSX', 'Advanced CSS', 'JavaScript'],
+    title: "The Pokemon Project",
+    img: "./assets/pokemon.jpg",
+    list: ["ReactJs", "JSX", "Advanced CSS", "JavaScript"],
     colors: { color1: firstColorChoice[2], color2: secondColorChoice[2] },
-    backTitle: 'Project Using',
-    backPara: 'React',
-    liveLink: 'https://pokemonmatch-as05.netlify.app/',
-    githubLink: 'https://github.com/AkshayS05/pokemon-match-react-app/',
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://pokemonmatch-as05.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/pokemon-match-react-app/",
   },
   {
-    title: 'Awesome Food Project',
-    img: './assets/awesomefood.jpg',
-    list: ['ReactJs', 'CSS', 'JavaScript', 'Web Design'],
+    title: "Awesome Food Project",
+    img: "./assets/awesomefood.jpg",
+    list: ["ReactJs", "CSS", "JavaScript", "Web Design"],
     colors: { color1: firstColorChoice[3], color2: secondColorChoice[3] },
-    backTitle: 'Project Using',
-    backPara: 'HTML, CSS, JS',
-    liveLink: 'https://omnifoodbyakshays05.netlify.app/',
-    githubLink: '#',
+    backTitle: "Project Using",
+    backPara: "HTML, CSS, JS",
+    liveLink: "https://omnifoodbyakshays05.netlify.app/",
+    githubLink: "#",
   },
   {
-    title: 'Recipe Finder Project',
-    img: './assets/recipe.jpg',
-    list: ['ReactJs', 'JSX', 'CSS', 'JavaScript'],
+    title: "Recipe Finder Project",
+    img: "./assets/recipe.jpg",
+    list: ["ReactJs", "JSX", "CSS", "JavaScript"],
     colors: { color1: firstColorChoice[4], color2: secondColorChoice[4] },
-    backTitle: 'Project Using',
-    backPara: 'React',
-    liveLink: 'https://awesome-recipes-5dd0e.web.app/',
-    githubLink: 'https://github.com/AkshayS05/recipeFinder',
+    backTitle: "Project Using",
+    backPara: "React",
+    liveLink: "https://awesome-recipes-5dd0e.web.app/",
+    githubLink: "https://github.com/AkshayS05/recipeFinder",
   },
   {
-    title: 'TODO NODE JS APP',
-    img: './assets/todo.jpg',
-    list: ['Mongo DB', 'Express Js', 'EJS', 'NodeJs'],
+    title: "TODO NODE JS APP",
+    img: "./assets/todo.jpg",
+    list: ["Mongo DB", "Express Js", "EJS", "NodeJs"],
     colors: { color1: firstColorChoice[5], color2: secondColorChoice[5] },
-    backTitle: 'Project Using',
-    backPara: 'NodeJs',
-    liveLink: '#',
-    githubLink: 'https://github.com/AkshayS05/Todo-App',
+    backTitle: "Project Using",
+    backPara: "NodeJs",
+    liveLink: "#",
+    githubLink: "https://github.com/AkshayS05/Todo-App",
   },
   {
-    title: 'DS & ALGO IN JAVA',
-    img: './assets/java.jpg',
-    list: ['Sorting Algos', 'Searching Algos', 'Data Structures', 'OOP'],
+    title: "DS & ALGO IN JAVA",
+    img: "./assets/java.jpg",
+    list: ["Sorting Algos", "Searching Algos", "Data Structures", "OOP"],
     colors: { color1: firstColorChoice[6], color2: secondColorChoice[6] },
-    backTitle: 'DS & ALGO IN',
-    backPara: 'JAVA',
-    liveLink: '#',
-    githubLink: 'https://github.com/AkshayS05/Binary_Search',
+    backTitle: "DS & ALGO IN",
+    backPara: "JAVA",
+    liveLink: "#",
+    githubLink: "https://github.com/AkshayS05/Binary_Search",
   },
   {
-    title: 'Awesome Code Bank',
-    img: './assets/bankapp.jpg',
-    list: ['Dates & Timers', 'Array Methods', 'Method Chaining', 'Loops'],
+    title: "Awesome Code Bank",
+    img: "./assets/bankapp.jpg",
+    list: ["Dates & Timers", "Array Methods", "Method Chaining", "Loops"],
     colors: { color1: firstColorChoice[7], color2: secondColorChoice[7] },
-    backTitle: 'Bank App',
-    backPara: 'By Jonas',
-    liveLink: 'https://awesomecodebank.netlify.app/',
-    githubLink: 'https://github.com/AkshayS05/bankApp',
+    backTitle: "Bank App",
+    backPara: "By Jonas",
+    liveLink: "https://awesomecodebank.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/bankApp",
   },
   {
-    title: 'MaterialUI APP',
-    img: './assets/materialui.jpg',
-    list: ['ReactJs', 'MaterialUI', 'CSS', 'Responsive'],
+    title: "MaterialUI APP",
+    img: "./assets/materialui.jpg",
+    list: ["ReactJs", "MaterialUI", "CSS", "Responsive"],
     colors: { color1: firstColorChoice[1], color2: secondColorChoice[1] },
-    backTitle: 'React APP',
-    backPara: 'CSS Framework',
-    liveLink: 'https://materialuiakshay.netlify.app/',
-    githubLink: 'https://github.com/AkshayS05/materialUIProject',
+    backTitle: "React APP",
+    backPara: "CSS Framework",
+    liveLink: "https://materialuiakshay.netlify.app/",
+    githubLink: "https://github.com/AkshayS05/materialUIProject",
   },
   {
-    title: 'Code World Quiz',
-    img: './assets/materialui.jpg',
-    list: ['React Js', 'JSX', 'JSON', 'React Hooks'],
+    title: "Code World Quiz",
+    img: "./assets/materialui.jpg",
+    list: ["React Js", "JSX", "JSON", "React Hooks"],
     colors: { color1: firstColorChoice[2], color2: secondColorChoice[2] },
-    backTitle: 'React APP',
-    backPara: 'CSS Framework',
-    liveLink: '#',
-    githubLink: 'https://github.com/AkshayS05/codeworldquiz',
+    backTitle: "React APP",
+    backPara: "CSS Framework",
+    liveLink: "#",
+    githubLink: "https://github.com/AkshayS05/codeworldquiz",
   },
   {
-    title: 'Dice Game',
-    img: './assets/dice_roll_game.jpg',
-    list: ['JavaScript', 'HTML', 'CSS', 'Responsiveness'],
+    title: "Dice Game",
+    img: "./assets/dice_roll_game.jpg",
+    list: ["JavaScript", "HTML", "CSS", "Responsiveness"],
     colors: { color1: firstColorChoice[3], color2: secondColorChoice[3] },
-    backTitle: 'Vanilla JavaScript',
-    backPara: 'Dice Roll',
-    liveLink: 'https://akshays05.github.io/dicegame/',
-    githubLink: 'https://github.com/AkshayS05/dicegame',
+    backTitle: "Vanilla JavaScript",
+    backPara: "Dice Roll",
+    liveLink: "https://akshays05.github.io/dicegame/",
+    githubLink: "https://github.com/AkshayS05/dicegame",
   },
 ];
 
 // skills section
-const skillsSection = document.querySelector('.skills-grid');
+const skillsSection = document.querySelector(".skills-grid");
 allSkills.map((skill, i) => {
   const html = `<div class="skills-grid-row skill">
 <span class="skill--percentage-${skill.totalValue} animate__skill">${skill.skillName}</span>
 </div>`;
-  skillsSection.insertAdjacentHTML('beforeend', html);
+  skillsSection.insertAdjacentHTML("beforeend", html);
 });
 for (let i = 0; i < allSkills.length; i++) {
   const singleSkill = document.querySelector(
-    `.skill--percentage-${allSkills[i].totalValue}`,
+    `.skill--percentage-${allSkills[i].totalValue}`
   );
   singleSkill.style.backgroundImage = `linear-gradient(to right bottom,${allSkills[i].colors.color1} , ${allSkills[i].colors.color2})`;
 }
@@ -408,6 +456,7 @@ projects.map((project, i) => {
           </ul>
         </div>
       </div>
+
       <!-- back -->
       <div class="card__side card__side--back card__side--back-${i}">
   
@@ -426,72 +475,66 @@ projects.map((project, i) => {
   </div>
   </div>`;
 
-  elem.insertAdjacentHTML('beforeend', html);
+  elem.insertAdjacentHTML("beforeend", html);
 });
 
-const allCards = document.querySelectorAll('.card');
-let cardFront = document.querySelectorAll('.card__side');
+const allCards = document.querySelectorAll(".card");
+let cardFront = document.querySelectorAll(".card__side");
 
 // to set dark theme
 
 function handleColorTheme() {
   let isDarkThemeActive;
-  toggleBtn.classList.toggle('onToggle');
+  toggleBtn.classList.toggle("onToggle");
 
-  for(let i=0; i<cardFront.length; i++){
-
-    cardFront[i].classList.toggle('card__side--front--dark');
-  };
-
-  toggleBackground.classList.toggle('toggleBackground');
-      particles.classList.toggle('toggleBackgroundLight');
-      particlesTheme.classList.toggle('toggle-dark');
-      sectionHeroElem.classList.toggle('particles-dark');
-      header.classList.toggle('header_contact_dark');
-      contactSection.classList.toggle('header_contact_dark');
-      contactSectionHeading.classList.add('toggle-dark');
-      toggleDark.classList.toggle('toggle-dark');
-      cardActiveClass='card__side--front--dark';
-  
-  if(toggleBtn.classList.contains('onToggle')){ 
-    theme ='Dark';
-    isDarkThemeActive = 'card__side card__side--front--dark';
-    
-  }else{
-    theme =  'Light';
-    isDarkThemeActive = 'card__side card__side--front';
+  for (let i = 0; i < cardFront.length; i++) {
+    cardFront[i].classList.toggle("card__side--front--dark");
   }
-  
-  localStorage.setItem('PageTheme',JSON.stringify(theme));
-  };
- 
-  let GetTheme = JSON.parse(localStorage.getItem('PageTheme'));
 
-  if(GetTheme ==='Dark'){
-      toggleBtn.classList.add('onToggle');
-        toggleBackground.classList.add('toggleBackground');
-        particles.classList.add('toggleBackgroundLight');
-        particlesTheme.classList.add('toggle-dark');
-        sectionHeroElem.classList.toggle('particles-dark');
-        header.classList.toggle('header_contact_dark');
-        contactSection.classList.toggle('header_contact_dark');
-        contactSectionHeading.classList.add('toggle-dark');
-        toggleDark.classList.add('toggle-dark');
-        isDarkThemeActive = 'card__side card__side--front--dark';
-        for(let i=0; i<cardFront.length; i++){
+  toggleBackground.classList.toggle("toggleBackground");
+  particles.classList.toggle("toggleBackgroundLight");
+  particlesTheme.classList.toggle("toggle-dark");
+  sectionHeroElem.classList.toggle("particles-dark");
+  header.classList.toggle("header_contact_dark");
+  contactSection.classList.toggle("header_contact_dark");
+  contactSectionHeading.classList.add("toggle-dark");
+  toggleDark.classList.toggle("toggle-dark");
+  cardActiveClass = "card__side--front--dark";
 
-          cardFront[i].classList.toggle('card__side--front--dark');
-        }
-    }else{
-      for(let i=0; i<cardFront.length; i++){
+  if (toggleBtn.classList.contains("onToggle")) {
+    theme = "Dark";
+    isDarkThemeActive = "card__side card__side--front--dark";
+  } else {
+    theme = "Light";
+    isDarkThemeActive = "card__side card__side--front";
+  }
 
-        cardFront[i].classList.toggle('card__side--front');
-      };
-    };
+  localStorage.setItem("PageTheme", JSON.stringify(theme));
+}
 
+let GetTheme = JSON.parse(localStorage.getItem("PageTheme"));
 
-  
-  toggle.addEventListener('click', handleColorTheme);
+if (GetTheme === "Dark") {
+  toggleBtn.classList.add("onToggle");
+  toggleBackground.classList.add("toggleBackground");
+  particles.classList.add("toggleBackgroundLight");
+  particlesTheme.classList.add("toggle-dark");
+  sectionHeroElem.classList.toggle("particles-dark");
+  header.classList.toggle("header_contact_dark");
+  contactSection.classList.toggle("header_contact_dark");
+  contactSectionHeading.classList.add("toggle-dark");
+  toggleDark.classList.add("toggle-dark");
+  isDarkThemeActive = "card__side card__side--front--dark";
+  for (let i = 0; i < cardFront.length; i++) {
+    cardFront[i].classList.toggle("card__side--front--dark");
+  }
+} else {
+  for (let i = 0; i < cardFront.length; i++) {
+    cardFront[i].classList.toggle("card__side--front");
+  }
+}
+
+toggle.addEventListener("click", handleColorTheme);
 // to set background image
 let projectsCount = 0;
 let i;
@@ -513,15 +556,15 @@ for (i = 0; i < projects.length; i++) {
         ${projects[i].colors.color1} , ${projects[i].colors.color2}
       )`;
 }
-const slides = document.querySelectorAll('.slide');
-const btnLeft = document.querySelector('.slider__btn--left');
-const btnRight = document.querySelector('.slider__btn--right');
+const slides = document.querySelectorAll(".slide");
+const btnLeft = document.querySelector(".slider__btn--left");
+const btnRight = document.querySelector(".slider__btn--right");
 let currSlide = 0;
 let maxSlides = slides.length;
 
 const moveSlide = function (slide) {
   slides.forEach(
-    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%`),
+    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%`)
   );
 };
 moveSlide(0);
@@ -542,13 +585,13 @@ const moveBehind = function () {
   moveSlide(currSlide);
 };
 
-btnRight.addEventListener('click', moveAhead);
-btnLeft.addEventListener('click', moveBehind);
+btnRight.addEventListener("click", moveAhead);
+btnLeft.addEventListener("click", moveBehind);
 // handling arrow keys
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'ArrowLeft') {
+document.addEventListener("keydown", function (e) {
+  if (e.key === "ArrowLeft") {
     moveBehind();
-  } else if (e.key === 'ArrowRight') {
+  } else if (e.key === "ArrowRight") {
     moveAhead();
   }
 });
