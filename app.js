@@ -247,14 +247,14 @@ const allSkills = [
 ///Cards component
 const projects = [
   {
-    title: "MovieNation",
-    img: "./assets/MovieNation.jpg",
-    list: ["ReactJs", "JSX", "MaterialUI", "JavaScript"],
+    title: "ByteBookExchange",
+    img: "./assets/bbe_logo.png",
+    list: ["ReactJs", "JavaScript", "WordPress", "PHP"],
     colors: { color1: firstColorChoice[4], color2: secondColorChoice[3] },
     backTitle: "Project Using",
-    backPara: "React",
-    liveLink: "https://movienationapp.netlify.app/",
-    githubLink: "https://github.com/AkshayS05/MovieNation-Akshaysharma",
+    backPara: "WordPress",
+    liveLink: "https://bytebookexchange.com/",
+    githubLink: "https://github.com/AkshayS05/BBExchange",
   },
   {
     title: "Doughlicious",
