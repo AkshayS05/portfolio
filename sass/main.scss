@@ -38,8 +38,8 @@ html {
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Open Sans", sans-serif;
+  font-family: "Roboto", sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #555;
@@ -59,6 +59,8 @@ body {
 }
 .lazy-img {
   filter: blur(20px);
+  max-width: 100%;
+  height: auto;
 }
 // Reusables
 .section-heading {
@@ -270,7 +272,7 @@ body {
   color: $color--white;
 }
 
-.icon-mobile-nav[name='close-icon'] {
+.icon-mobile-nav[name="close-icon"] {
   display: none;
 }
 .header__text-box {
@@ -599,7 +601,7 @@ body {
   left: -0.7rem;
 }
 .experience-spots::after {
-  content: '';
+  content: "";
   position: absolute;
   width: inherit;
   height: inherit;
@@ -610,7 +612,7 @@ body {
   left: -0.1rem;
 }
 .experience-spots::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 1.5rem;
   height: 1rem;
@@ -957,7 +959,7 @@ h2 .ph-book-open {
   }
   /* content and displat properties are mandatory to write in order to create child elements. Here we are creating a child element of btn after it */
   &::after {
-    content: '';
+    content: "";
     display: inline-block;
     height: 100%;
     width: 100%;
@@ -1014,7 +1016,7 @@ h2 .ph-book-open {
   }
   /* content and displat properties are mandatory to write in order to create child elements. Here we are creating a child element of btn after it */
   &::after {
-    content: '';
+    content: "";
     display: inline-block;
     height: 100%;
     width: 100%;
@@ -1124,7 +1126,7 @@ h2 .ph-book-open {
     top: -0.4rem;
 
     &::after {
-      content: '';
+      content: "";
       display: block;
       height: 1.3rem;
       width: 1.3rem;
@@ -1234,7 +1236,7 @@ h2 .ph-book-open {
   color: #000;
 }
 .particles-dark {
-  background-image: linear-gradient(to top right, #373b44, #59595a)
+  background-image: linear-gradient(to top right, #373b44, #59595a);
 }
 .card_dark {
   background-color: $color-grey-dark;
@@ -1249,6 +1251,6 @@ h2 .ph-book-open {
 .header_contact_dark {
   background-image: linear-gradient(to bottom right, #484f5a, #222);
 }
-.card--dark{
+.card--dark {
   color: $color--white;
 }
