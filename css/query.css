@@ -587,7 +587,7 @@
   }
 }
 
-@media (max-width: 17.5em) {
+@media (max-width: 17.94em) {
   .skills-grid {
     grid-template-columns: repeat(1, 1fr);
   }
