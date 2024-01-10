@@ -287,6 +287,13 @@
 }
 
 @media (max-width: 37em) {
+  .card__heading {
+    font-size: 1.2rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    word-wrap: break-word;
+  }
   .section {
     max-width: 60rem;
   }
@@ -582,6 +589,13 @@
 }
 
 @media (max-width: 18em) {
+  .card__heading {
+    font-size: 1rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    word-wrap: break-word;
+  }
   .contact .form__input {
     width: 80%;
   }
