@@ -95,3 +95,43 @@ if (modal) {
     if (e.key === 'Escape') closeModal();
   });
 }
+
+// ===== CONTACT FORM SUBMIT =====
+const contactForm = document.getElementById('contactForm');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('contactSubmit');
+    const successMsg = document.getElementById('contactSuccess');
+    const formData = new FormData(contactForm);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' },
+      });
+
+      if (res.ok) {
+        contactForm.reset();
+        successMsg.style.display = 'block';
+        submitBtn.textContent = 'Sent!';
+        setTimeout(() => {
+          successMsg.style.display = 'none';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Send Message <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+        }, 4000);
+      } else {
+        submitBtn.textContent = 'Error — try again';
+        submitBtn.disabled = false;
+      }
+    } catch {
+      submitBtn.textContent = 'Error — try again';
+      submitBtn.disabled = false;
+    }
+  });
+}

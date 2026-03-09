@@ -1559,6 +1559,14 @@ img {
   justify-content: center;
 }
 
+.contact__success {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #10B981;
+  text-align: center;
+}
+
 /* ===== FOOTER ===== */
 .footer {
   background: var(--color-primary);

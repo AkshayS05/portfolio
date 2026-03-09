@@ -13,6 +13,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Google Analytics — replace G-XXXXXXXXXX with your Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
 </head>
 <body>
 
@@ -814,7 +823,10 @@
         </div>
       </div>
 
-      <form class="contact__form" action="https://formspree.io/f/YOUR_ID" method="POST">
+      <form class="contact__form" action="https://formspree.io/f/YOUR_ID" method="POST" id="contactForm">
+        <!-- Honeypot field — hidden from real users, catches bots -->
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+        <input type="hidden" name="_subject" value="New Portfolio Contact" />
         <div class="contact__field">
           <label for="name" class="contact__label">Name</label>
           <input type="text" id="name" name="name" class="contact__input" placeholder="Your name" required />
@@ -827,10 +839,11 @@
           <label for="message" class="contact__label">Message</label>
           <textarea id="message" name="message" class="contact__input contact__textarea" placeholder="Tell me about your project or opportunity..." rows="5" required></textarea>
         </div>
-        <button type="submit" class="btn btn--primary btn--full">
+        <button type="submit" class="btn btn--primary btn--full" id="contactSubmit">
           Send Message
           <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
+        <p class="contact__success" id="contactSuccess" style="display:none;">Thanks! Your message has been sent. I'll get back to you soon.</p>
       </form>
 
     </div>
