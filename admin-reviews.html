@@ -1,404 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>Admin — Manage Reviews</title>
-  <link rel="icon" href="assets/favicon.jpg" type="image/jpeg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/reviews.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Admin — Akshay Sharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .admin-banner {
-      background: #F59E0B;
-      color: #1a1a1a;
-      text-align: center;
-      padding: 0.5rem 1rem;
-      font-size: 0.8125rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1001;
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #2a2a3a;
+      --text: #f0f0f5;
+      --muted: #9394a5;
+      --dim: #6b6c7e;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
     }
-    .header { top: 28px !important; }
-    .rv-hero { padding-top: 12rem !important; }
-    .admin-section {
-      padding: 4rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 40px 24px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+    .login-box { text-align: center; padding: 80px 20px; }
+    .btn-google {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 14px 32px; background: white; border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+      color: #1f1f1f; cursor: pointer; transition: all 0.2s;
     }
-    .admin-section h2 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--color-text);
-      margin-bottom: 0.5rem;
+    .btn-google:hover { background: #f5f5f5; }
+    .btn-google svg { width: 20px; height: 20px; }
+
+    .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--card); padding: 4px; border-radius: 10px; width: fit-content; }
+    .tab {
+      padding: 8px 20px; border: none; background: transparent; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; border-radius: 8px; transition: all 0.2s;
     }
-    .admin-section > p {
-      font-size: 0.875rem;
-      color: var(--color-secondary);
-      margin-bottom: 2rem;
+    .tab.active { background: var(--accent); color: white; }
+    .tab .badge {
+      display: inline-block; background: rgba(255,255,255,0.2); padding: 1px 7px;
+      border-radius: 10px; font-size: 11px; margin-left: 6px;
     }
-    .admin-form {
-      background: var(--color-bg-alt);
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 3rem;
+
+    .review-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; margin-bottom: 12px; transition: all 0.2s;
     }
-    .admin-form__row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    .review-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .review-avatar {
+      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
     }
-    .admin-form__field {
-      margin-bottom: 1rem;
+    .review-avatar-ph {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: white;
     }
-    .admin-form__field label {
-      display: block;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--color-text);
-      margin-bottom: 0.375rem;
+    .review-info { flex: 1; }
+    .review-name { font-weight: 600; font-size: 14px; }
+    .review-email { font-size: 12px; color: var(--dim); }
+    .review-rel { font-size: 11px; color: var(--muted); text-transform: capitalize; }
+    .review-stars { color: var(--amber); font-size: 14px; margin-bottom: 8px; }
+    .review-body { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .review-date { font-size: 11px; color: var(--dim); }
+    .review-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-action {
+      padding: 8px 18px; border: none; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
     }
-    .admin-form__field input,
-    .admin-form__field textarea,
-    .admin-form__field select {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      background: var(--color-bg);
-      color: var(--color-text);
-      font-family: var(--font-main);
-      font-size: 0.875rem;
+    .btn-approve { background: rgba(34,197,94,0.12); color: var(--green); }
+    .btn-approve:hover { background: rgba(34,197,94,0.25); }
+    .btn-reject { background: rgba(239,68,68,0.12); color: var(--red); }
+    .btn-reject:hover { background: rgba(239,68,68,0.25); }
+    .btn-unapprove { background: rgba(245,158,11,0.12); color: var(--amber); }
+    .btn-unapprove:hover { background: rgba(245,158,11,0.25); }
+
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
     }
-    .admin-form__field textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    .admin-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-    .admin-review-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .admin-review {
-      background: var(--color-bg-alt);
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-    .admin-review__content { flex: 1; }
-    .admin-review__content h4 {
-      font-size: 0.9375rem;
-      font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: 0.25rem;
-    }
-    .admin-review__content .role {
-      font-size: 0.75rem;
-      color: var(--color-text-muted);
-      margin-bottom: 0.5rem;
-    }
-    .admin-review__content .text {
-      font-size: 0.8125rem;
-      color: var(--color-secondary);
-      line-height: 1.6;
-    }
-    .admin-review__content .meta {
-      font-size: 0.6875rem;
-      color: var(--color-text-muted);
-      margin-top: 0.5rem;
-    }
-    .admin-review__actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-shrink: 0;
-    }
-    .btn--danger {
-      background: #EF4444;
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn--danger:hover { background: #DC2626; }
-    .btn--small {
-      background: var(--color-bg);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .json-output {
-      background: #1e1e2e;
-      color: #a6e3a1;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      padding: 1.5rem;
-      border-radius: 12px;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-      max-height: 400px;
-      overflow-y: auto;
-      margin-top: 1rem;
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .admin-form__row { grid-template-columns: 1fr; }
-      .admin-review { flex-direction: column; }
-    }
+    .status-pending { background: rgba(245,158,11,0.12); color: var(--amber); }
+    .status-approved { background: rgba(34,197,94,0.12); color: var(--green); }
+
+    .empty { text-align: center; padding: 40px; color: var(--dim); font-size: 14px; }
+    .access-denied { text-align: center; padding: 60px; color: var(--red); }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Review Admin</h1>
+    <p class="subtitle">Approve, reject, and manage portfolio reviews.</p>
 
-  <div class="admin-banner">Admin Panel — Not publicly listed</div>
-
-  <header class="header header--scrolled">
-    <nav class="nav">
-      <a href="index.html" class="nav__logo">AS</a>
-      <ul class="nav__links">
-        <li><a href="index.html" class="nav__link">Home</a></li>
-        <li><a href="reviews.html" class="nav__link">Public Reviews</a></li>
-        <li><a href="admin-reviews.html" class="nav__link nav__link--active">Admin</a></li>
-      </ul>
-      <a href="index.html" class="nav__cta">Back to Site</a>
-      <button class="nav__mobile-toggle" aria-label="Toggle navigation">
-        <span></span>
-        <span></span>
-        <span></span>
+    <div id="loginBox" class="login-box">
+      <p style="color: var(--muted); margin-bottom: 20px;">Sign in with your admin Google account to manage reviews.</p>
+      <button class="btn-google" onclick="adminSignIn()">
+        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Sign in with Google
       </button>
-    </nav>
-  </header>
-
-  <!-- ===== HERO ===== -->
-  <section class="rv-hero" style="padding-bottom: 3rem;">
-    <div class="rv-hero__container">
-      <span class="rv-hero__label">Admin Panel</span>
-      <h1 class="rv-hero__title">Manage Reviews</h1>
-      <p class="rv-hero__subtitle">Add, edit, or remove reviews. Export as JSON and update <code style="background:rgba(255,255,255,0.1);padding:0.125rem 0.5rem;border-radius:4px;">data/reviews.json</code> to publish.</p>
     </div>
-  </section>
 
-  <!-- ===== ADMIN CONTENT ===== -->
-  <main style="background: var(--color-bg);">
-    <div class="admin-section">
-
-      <h2>Add New Review</h2>
-      <p>Fill in the details below to add a review.</p>
-
-      <div class="admin-form" id="adminForm">
-        <div class="admin-form__row">
-          <div class="admin-form__field">
-            <label for="admin-name">Reviewer Name</label>
-            <input type="text" id="admin-name" placeholder="Jane Smith" />
-          </div>
-          <div class="admin-form__field">
-            <label for="admin-role">Role / Company</label>
-            <input type="text" id="admin-role" placeholder="Senior Dev at Microsoft" />
-          </div>
-        </div>
-        <div class="admin-form__row">
-          <div class="admin-form__field">
-            <label for="admin-rating">Rating</label>
-            <select id="admin-rating">
-              <option value="5">5 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="3">3 Stars</option>
-              <option value="2">2 Stars</option>
-              <option value="1">1 Star</option>
-            </select>
-          </div>
-          <div class="admin-form__field">
-            <label for="admin-date">Date</label>
-            <input type="date" id="admin-date" />
-          </div>
-        </div>
-        <div class="admin-form__field">
-          <label for="admin-text">Review Text</label>
-          <textarea id="admin-text" placeholder="Write the review here..."></textarea>
-        </div>
-        <div class="admin-actions">
-          <button class="btn btn--primary" id="addReviewBtn">Add Review</button>
-        </div>
+    <div id="adminPanel" style="display:none;">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('pending')" id="tabPending">Pending <span class="badge" id="pendingCount">0</span></button>
+        <button class="tab" onclick="switchTab('approved')" id="tabApproved">Approved <span class="badge" id="approvedCount">0</span></button>
       </div>
-
-      <h2>Current Reviews (<span id="adminCount">0</span>)</h2>
-      <p>These reviews are displayed on your portfolio. Delete or export below.</p>
-
-      <div class="admin-review-list" id="adminReviewList"></div>
-
-      <div style="margin-top: 2rem;">
-        <div class="admin-actions">
-          <button class="btn btn--primary" id="exportJsonBtn">Export JSON</button>
-          <button class="btn--small" id="copyJsonBtn" style="display:none;">Copy to Clipboard</button>
-        </div>
-        <pre class="json-output" id="jsonOutput"></pre>
-        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.75rem;">
-          Copy the JSON and paste it into <code>data/reviews.json</code>, then commit & push to update the live site.
-        </p>
-      </div>
-
+      <div id="reviewsList"></div>
     </div>
-  </main>
 
-  <footer class="footer">
-    <div class="footer__container">
-      <div class="footer__left">
-        <a href="index.html" class="nav__logo">AS</a>
-        <p class="footer__copy">Admin Panel — Akshay Sharma</p>
-      </div>
+    <div id="accessDenied" class="access-denied" style="display:none;">
+      <p>Access denied. This panel is only available to the site admin.</p>
     </div>
-  </footer>
+  </div>
 
   <script>
-    // ===== ADMIN REVIEWS MANAGER =====
-    const STORAGE_KEY = 'portfolio_reviews';
+    const SUPABASE_URL = 'https://vowfihujcrkmgnsigjxm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvd2ZpaHVqY3JrbWduc2lnanhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDk4NTEsImV4cCI6MjA4ODA4NTg1MX0.TEuCa1TOmLp82ZBoWgyBdDY-CjaOoSlWVVEwfdXt_pQ';
+    const ADMIN_EMAIL = 'akshaysharma543210@gmail.com';
 
-    async function loadReviews() {
-      let reviews = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (!reviews) {
-        try {
-          const res = await fetch('data/reviews.json');
-          reviews = await res.json();
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
-        } catch {
-          reviews = [];
-        }
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentTab = 'pending';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) handleAuth(session.user);
+
+      sb.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) handleAuth(session.user);
+      });
+    });
+
+    function handleAuth(user) {
+      document.getElementById('loginBox').style.display = 'none';
+      if (user.email === ADMIN_EMAIL) {
+        document.getElementById('adminPanel').style.display = 'block';
+        loadAllReviews();
+      } else {
+        document.getElementById('accessDenied').style.display = 'block';
       }
-      return reviews;
     }
 
-    function saveReviews(reviews) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+    async function adminSignIn() {
+      await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.href }
+      });
     }
 
-    function renderStars(rating) {
-      return '<span style="color:#F59E0B;">' + '\u2605'.repeat(rating) + '</span>' +
-             '<span style="color:var(--color-border);">' + '\u2605'.repeat(5 - rating) + '</span>';
+    async function loadAllReviews() {
+      const { data, error } = await sb.from('reviews').select('*').order('created_at', { ascending: false });
+      if (error || !data) return;
+
+      const pending = data.filter(r => !r.approved);
+      const approved = data.filter(r => r.approved);
+
+      document.getElementById('pendingCount').textContent = pending.length;
+      document.getElementById('approvedCount').textContent = approved.length;
+
+      renderReviews(currentTab === 'pending' ? pending : approved);
     }
 
-    function renderAdminList(reviews) {
-      const list = document.getElementById('adminReviewList');
-      const count = document.getElementById('adminCount');
-      count.textContent = reviews.length;
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(tab === 'pending' ? 'tabPending' : 'tabApproved').classList.add('active');
+      loadAllReviews();
+    }
 
+    function renderReviews(reviews) {
+      const el = document.getElementById('reviewsList');
       if (reviews.length === 0) {
-        list.innerHTML = '<p style="color:var(--color-text-muted);font-size:0.875rem;">No reviews yet. Add one above.</p>';
+        el.innerHTML = `<div class="empty">No ${currentTab} reviews.</div>`;
         return;
       }
 
-      list.innerHTML = reviews.map((r, i) => `
-        <div class="admin-review">
-          <div class="admin-review__content">
-            <h4>${escapeHtml(r.name)} ${renderStars(r.rating)}</h4>
-            <div class="role">${escapeHtml(r.role)}</div>
-            <div class="text">"${escapeHtml(r.text)}"</div>
-            <div class="meta">Added: ${r.date || 'N/A'}</div>
-          </div>
-          <div class="admin-review__actions">
-            <button class="btn--danger" onclick="deleteReview(${i})">Delete</button>
-          </div>
-        </div>
-      `).join('');
+      el.innerHTML = reviews.map(r => {
+        const initials = r.reviewer_name.split(' ').map(n => n[0]).join('').toUpperCase();
+        const stars = '★'.repeat(r.star_rating) + '<span style="color:var(--dim)">' + '★'.repeat(5 - r.star_rating) + '</span>';
+        const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        return `
+          <div class="review-item">
+            <div class="review-top">
+              ${r.reviewer_avatar_url
+                ? `<img class="review-avatar" src="${r.reviewer_avatar_url}" onerror="this.outerHTML='<div class=review-avatar-ph>${initials}</div>'">`
+                : `<div class="review-avatar-ph">${initials}</div>`}
+              <div class="review-info">
+                <div class="review-name">${esc(r.reviewer_name)}</div>
+                <div class="review-email">${esc(r.reviewer_email)}</div>
+                <div class="review-rel">${esc(r.relationship)}</div>
+              </div>
+              <span class="status-badge ${r.approved ? 'status-approved' : 'status-pending'}">${r.approved ? 'Live' : 'Pending'}</span>
+            </div>
+            <div class="review-stars">${stars}</div>
+            <div class="review-body">${esc(r.review_text)}</div>
+            <div class="review-date">${date}</div>
+            <div class="review-actions">
+              ${r.approved
+                ? `<button class="btn-action btn-unapprove" onclick="toggleApproval('${r.id}', false)">Unapprove</button>`
+                : `<button class="btn-action btn-approve" onclick="toggleApproval('${r.id}', true)">Approve</button>`
+              }
+              <button class="btn-action btn-reject" onclick="deleteReview('${r.id}')">Delete</button>
+            </div>
+          </div>`;
+      }).join('');
     }
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+    async function toggleApproval(id, approve) {
+      await sb.from('reviews').update({ approved: approve }).eq('id', id);
+      loadAllReviews();
     }
 
-    async function init() {
-      const reviews = await loadReviews();
-      renderAdminList(reviews);
-      document.getElementById('admin-date').valueAsDate = new Date();
+    async function deleteReview(id) {
+      if (!confirm('Delete this review permanently?')) return;
+      await sb.from('reviews').delete().eq('id', id);
+      loadAllReviews();
     }
 
-    document.getElementById('addReviewBtn').addEventListener('click', async () => {
-      const name = document.getElementById('admin-name').value.trim();
-      const role = document.getElementById('admin-role').value.trim();
-      const rating = parseInt(document.getElementById('admin-rating').value);
-      const date = document.getElementById('admin-date').value;
-      const text = document.getElementById('admin-text').value.trim();
-
-      if (!name || !role || !text) {
-        alert('Please fill in all fields.');
-        return;
-      }
-
-      const reviews = await loadReviews();
-      const maxId = reviews.reduce((max, r) => Math.max(max, r.id || 0), 0);
-      reviews.push({ id: maxId + 1, name, role, text, rating, date });
-      saveReviews(reviews);
-      renderAdminList(reviews);
-
-      document.getElementById('admin-name').value = '';
-      document.getElementById('admin-role').value = '';
-      document.getElementById('admin-text').value = '';
-      document.getElementById('admin-rating').value = '5';
-    });
-
-    window.deleteReview = async function(index) {
-      if (!confirm('Delete this review?')) return;
-      const reviews = await loadReviews();
-      reviews.splice(index, 1);
-      saveReviews(reviews);
-      renderAdminList(reviews);
-    };
-
-    document.getElementById('exportJsonBtn').addEventListener('click', async () => {
-      const reviews = await loadReviews();
-      const json = JSON.stringify(reviews, null, 2);
-      const output = document.getElementById('jsonOutput');
-      const copyBtn = document.getElementById('copyJsonBtn');
-      output.textContent = json;
-      output.style.display = 'block';
-      copyBtn.style.display = 'inline-flex';
-    });
-
-    document.getElementById('copyJsonBtn').addEventListener('click', () => {
-      const json = document.getElementById('jsonOutput').textContent;
-      navigator.clipboard.writeText(json).then(() => {
-        const btn = document.getElementById('copyJsonBtn');
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
-      });
-    });
-
-    // Mobile nav
-    const mobileToggle = document.querySelector('.nav__mobile-toggle');
-    const navLinks = document.querySelector('.nav__links');
-    if (mobileToggle) {
-      mobileToggle.addEventListener('click', () => {
-        mobileToggle.classList.toggle('active');
-        navLinks.classList.toggle('nav__links--open');
-      });
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
     }
-
-    init();
   </script>
 </body>
 </html>

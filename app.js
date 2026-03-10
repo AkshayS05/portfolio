@@ -136,33 +136,39 @@ if (contactForm) {
   });
 }
 
-// ===== LOAD TESTIMONIALS FROM REVIEWS.JSON =====
+// ===== LOAD TESTIMONIALS FROM SUPABASE =====
 const testimonialGrid = document.getElementById('testimonialGrid');
 
 if (testimonialGrid) {
   (async function () {
-    try {
-      const res = await fetch('data/reviews.json');
-      const reviews = await res.json();
-      const show = reviews.slice(0, 2); // show latest 2 on homepage
+    const SUPABASE_URL = 'https://vowfihujcrkmgnsigjxm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvd2ZpaHVqY3JrbWduc2lnanhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDk4NTEsImV4cCI6MjA4ODA4NTg1MX0.TEuCa1TOmLp82ZBoWgyBdDY-CjaOoSlWVVEwfdXt_pQ';
 
-      testimonialGrid.innerHTML = show.map(r => {
-        const initials = r.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-        return `
-          <blockquote class="testimonial-card">
-            <p class="testimonial-card__text">"${escapeHtml(r.text)}"</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </div>
-              <div>
-                <cite class="testimonial-card__name">${escapeHtml(r.name)}</cite>
-                <span class="testimonial-card__role">${escapeHtml(r.role)}</span>
-              </div>
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?approved=eq.true&order=created_at.desc&limit=2`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      });
+      const reviews = await res.json();
+
+      if (!reviews.length) return;
+
+      testimonialGrid.innerHTML = reviews.map(r => `
+        <blockquote class="testimonial-card">
+          <p class="testimonial-card__text">"${escapeHtml(r.review_text)}"</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-          </blockquote>
-        `;
-      }).join('');
+            <div>
+              <cite class="testimonial-card__name">${escapeHtml(r.reviewer_name)}</cite>
+              <span class="testimonial-card__role">${escapeHtml(r.relationship)}</span>
+            </div>
+          </div>
+        </blockquote>
+      `).join('');
     } catch {
       // fallback — leave grid empty
     }

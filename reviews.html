@@ -1,145 +1,956 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Reviews & Testimonials for Akshay Sharma — Power Platform Specialist & Full-Stack Developer." />
-  <title>Reviews | Akshay Sharma</title>
-  <link rel="icon" href="assets/favicon.jpg" type="image/jpeg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/reviews.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews — Akshay Sharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-card-hover: #1a1a26;
+      --bg-input: #1e1e2e;
+      --border: #2a2a3a;
+      --border-focus: #6366f1;
+      --text-primary: #f0f0f5;
+      --text-secondary: #9394a5;
+      --text-muted: #6b6c7e;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.15);
+      --accent-hover: #818cf8;
+      --star-active: #f59e0b;
+      --star-inactive: #3a3a4a;
+      --success: #22c55e;
+      --error: #ef4444;
+      --radius: 12px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 48px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent-hover); }
+    .back-link svg { width: 16px; height: 16px; }
+
+    /* ── Header ── */
+    .page-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-hover) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 48px;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat { text-align: center; }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── CTA Button ── */
+    .cta-area {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px var(--accent-glow);
+    }
+    .btn-primary svg { width: 18px; height: 18px; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    /* ── Reviews grid ── */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease both;
+    }
+    .review-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(99, 102, 241, 0.2);
+      transform: translateY(-3px);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .review-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+    .review-avatar-placeholder {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: white;
+      flex-shrink: 0;
+    }
+    .review-meta { flex: 1; }
+    .review-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+    .review-relationship {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: capitalize;
+      margin-top: 2px;
+    }
+
+    .review-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 14px;
+    }
+    .review-stars .star {
+      color: var(--star-active);
+      font-size: 16px;
+    }
+    .review-stars .star.empty {
+      color: var(--star-inactive);
+    }
+
+    .review-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .review-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+    .empty-state p { font-size: 15px; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--text-primary); }
+
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .modal .subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Step indicator ── */
+    .steps {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s;
+    }
+    .step-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .step-dot.done {
+      background: var(--success);
+    }
+
+    /* ── Google sign in ── */
+    .btn-google {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 14px;
+      background: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f1f1f;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-google:hover { background: #f5f5f5; transform: translateY(-1px); }
+    .btn-google svg { width: 20px; height: 20px; }
+    .btn-google-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    /* ── Star rating input ── */
+    .star-input {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .star-input button {
+      background: none;
+      border: none;
+      font-size: 36px;
+      cursor: pointer;
+      color: var(--star-inactive);
+      transition: all 0.15s;
+      padding: 4px;
+    }
+    .star-input button:hover,
+    .star-input button.active {
+      color: var(--star-active);
+      transform: scale(1.15);
+    }
+
+    /* ── Form fields ── */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--border-focus);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239394a5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+    .form-group select option {
+      background: var(--bg-input);
+    }
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-submit:hover { background: var(--accent-hover); }
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ── Success state ── */
+    .success-state {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .success-state .checkmark {
+      width: 64px;
+      height: 64px;
+      background: rgba(34, 197, 94, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-state .checkmark svg {
+      width: 32px;
+      height: 32px;
+      color: var(--success);
+    }
+    .success-state h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .success-state p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--error);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 2000;
+      transition: transform 0.3s ease;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Loading skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-lg);
+      height: 200px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Signed-in user bar ── */
+    .user-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(99, 102, 241, 0.06);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+    .user-bar img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    .user-bar .user-info { flex: 1; }
+    .user-bar .user-name { font-size: 14px; font-weight: 600; }
+    .user-bar .user-email { font-size: 12px; color: var(--text-muted); }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .reviews-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-bar {
+        gap: 24px;
+      }
+      .stat-value {
+        font-size: 22px;
+      }
+      .modal {
+        padding: 28px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ===== HEADER / NAV ===== -->
-  <header class="header header--scrolled">
-    <nav class="nav">
-      <a href="index.html" class="nav__logo">AS</a>
-      <ul class="nav__links">
-        <li><a href="index.html" class="nav__link">Home</a></li>
-        <li><a href="index.html#projects" class="nav__link">Projects</a></li>
-        <li><a href="reviews.html" class="nav__link nav__link--active">Reviews</a></li>
-        <li><a href="index.html#contact" class="nav__link">Contact</a></li>
-      </ul>
-      <a href="#leaveReview" class="nav__cta">Leave a Review</a>
-      <button class="nav__mobile-toggle" aria-label="Toggle navigation">
-        <span></span>
-        <span></span>
-        <span></span>
+  <div class="page-wrapper">
+    <!-- Back to portfolio -->
+    <a href="index.html" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to Portfolio
+    </a>
+
+    <!-- Page header -->
+    <header class="page-header">
+      <h1>What People Say</h1>
+      <p>Honest reviews from people I've had the pleasure of working with.</p>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat">
+        <div class="stat-value" id="totalReviews">—</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="avgRating">—</div>
+        <div class="stat-label">Avg Rating</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="fiveStarCount">—</div>
+        <div class="stat-label">5-Star</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-area">
+      <button class="btn-primary" onclick="openModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Leave a Review
       </button>
-    </nav>
-  </header>
+    </div>
 
-  <!-- ===== REVIEWS HERO ===== -->
-  <section class="rv-hero">
-    <div class="rv-hero__container">
-      <span class="rv-hero__label">Testimonials & Reviews</span>
-      <h1 class="rv-hero__title">What People Say</h1>
-      <p class="rv-hero__subtitle">Feedback from colleagues, managers, and clients I've had the pleasure of working with.</p>
-      <div class="rv-hero__stats">
-        <div class="rv-hero__stat">
-          <span class="rv-hero__stat-number" id="reviewCount">--</span>
-          <span class="rv-hero__stat-label">Reviews</span>
+    <!-- Reviews grid -->
+    <div class="reviews-grid" id="reviewsGrid">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+
+  <!-- Review modal -->
+  <div class="modal-overlay" id="reviewModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <!-- Step 1: Sign in -->
+      <div id="step1" class="modal-step">
+        <div class="steps">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
         </div>
-        <div class="rv-hero__stat-divider"></div>
-        <div class="rv-hero__stat">
-          <span class="rv-hero__stat-number" id="avgRating">--</span>
-          <span class="rv-hero__stat-label">Avg Rating</span>
+        <h2>Sign in to review</h2>
+        <p class="subtitle">Quick Google sign-in so we know you're a real person. No spam, ever.</p>
+        <button class="btn-google" onclick="signInWithGoogle()">
+          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+        <p class="btn-google-note">We only use your name and profile photo.</p>
+      </div>
+
+      <!-- Step 2: Rating & Review -->
+      <div id="step2" class="modal-step" style="display:none;">
+        <div class="steps">
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+        </div>
+        <div class="user-bar" id="userBar"></div>
+        <h2>Your Review</h2>
+        <p class="subtitle">Rate your experience and share a few words.</p>
+
+        <div class="star-input" id="starInput">
+          <button onclick="setRating(1)">★</button>
+          <button onclick="setRating(2)">★</button>
+          <button onclick="setRating(3)">★</button>
+          <button onclick="setRating(4)">★</button>
+          <button onclick="setRating(5)">★</button>
+        </div>
+
+        <div class="form-group">
+          <label for="relationship">How do you know Akshay?</label>
+          <select id="relationship">
+            <option value="">Select one...</option>
+            <option value="colleague">Colleague</option>
+            <option value="manager">Manager</option>
+            <option value="client">Client</option>
+            <option value="collaborator">Collaborator</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewText">Your review</label>
+          <textarea id="reviewText" placeholder="What was it like working with Akshay?" maxlength="500" oninput="updateCharCount()"></textarea>
+          <div class="char-count"><span id="charCount">0</span>/500</div>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="submitReview()" disabled>Submit Review</button>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div id="step3" class="modal-step" style="display:none;">
+        <div class="steps">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+        </div>
+        <div class="success-state">
+          <div class="checkmark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>Thank you!</h3>
+          <p>Your review has been submitted and will appear after a quick review. Really appreciate you taking the time!</p>
+          <br>
+          <button class="btn-secondary" onclick="closeModal()">Close</button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ===== REVIEWS LIST ===== -->
-  <main class="rv-main">
-    <div class="rv-container">
-      <div class="rv-grid" id="reviewsGrid">
-        <!-- Reviews loaded dynamically from data/reviews.json -->
-      </div>
-      <p class="rv-empty" id="reviewsEmpty" style="display:none;">No reviews yet. Be the first to leave one!</p>
-    </div>
-  </main>
+  <!-- Toast for errors -->
+  <div class="toast" id="toast"></div>
 
-  <!-- ===== LEAVE A REVIEW ===== -->
-  <section class="rv-form-section" id="leaveReview">
-    <div class="rv-container">
-      <div class="rv-form-wrapper">
-        <h2 class="rv-form__title">Leave a Review</h2>
-        <p class="rv-form__subtitle">Worked with me? I'd love to hear your feedback.</p>
+  <script>
+    // ════════════════════════════════════════════════════
+    // CONFIG — Replace with your Supabase project details
+    // ════════════════════════════════════════════════════
+    const SUPABASE_URL = 'https://vowfihujcrkmgnsigjxm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvd2ZpaHVqY3JrbWduc2lnanhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDk4NTEsImV4cCI6MjA4ODA4NTg1MX0.TEuCa1TOmLp82ZBoWgyBdDY-CjaOoSlWVVEwfdXt_pQ';
 
-        <form class="rv-form" action="https://formspree.io/f/YOUR_ID" method="POST" id="reviewForm">
-          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-          <input type="hidden" name="_subject" value="New Portfolio Review" />
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-          <div class="rv-form__row">
-            <div class="rv-form__field">
-              <label for="rv-name" class="rv-form__label">Your Name</label>
-              <input type="text" id="rv-name" name="name" class="rv-form__input" placeholder="John Doe" required />
+    // ════════════════════════════════════════════════════
+    // STATE
+    // ════════════════════════════════════════════════════
+    let currentUser = null;
+    let selectedRating = 0;
+
+    // ════════════════════════════════════════════════════
+    // INIT — Load reviews & check auth
+    // ════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadReviews();
+      
+      // Check for existing session or OAuth redirect
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+      }
+
+      // Listen for auth changes (handles redirect after Google sign-in)
+      sb.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          currentUser = session.user;
+          showStep(2);
+          populateUserBar();
+        }
+      });
+    });
+
+    // ════════════════════════════════════════════════════
+    // LOAD & DISPLAY REVIEWS
+    // ════════════════════════════════════════════════════
+    async function loadReviews() {
+      const { data: reviews, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('approved', true)
+        .order('created_at', { ascending: false });
+
+      const grid = document.getElementById('reviewsGrid');
+
+      if (error || !reviews || reviews.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <p>No reviews yet. Be the first to leave one!</p>
+          </div>`;
+        updateStats([]);
+        return;
+      }
+
+      updateStats(reviews);
+
+      grid.innerHTML = reviews.map((r, i) => {
+        const initials = r.reviewer_name.split(' ').map(n => n[0]).join('').toUpperCase();
+        const stars = Array(5).fill(0).map((_, j) => 
+          `<span class="star ${j < r.star_rating ? '' : 'empty'}">★</span>`
+        ).join('');
+        const date = new Date(r.created_at).toLocaleDateString('en-US', { 
+          month: 'short', day: 'numeric', year: 'numeric' 
+        });
+
+        return `
+          <div class="review-card" style="animation-delay: ${i * 0.08}s">
+            <div class="review-header">
+              ${r.reviewer_avatar_url 
+                ? `<img class="review-avatar" src="${r.reviewer_avatar_url}" alt="${r.reviewer_name}" onerror="this.outerHTML='<div class=review-avatar-placeholder>${initials}</div>'">`
+                : `<div class="review-avatar-placeholder">${initials}</div>`
+              }
+              <div class="review-meta">
+                <div class="review-name">${escapeHtml(r.reviewer_name)}</div>
+                <div class="review-relationship">${escapeHtml(r.relationship)}</div>
+              </div>
             </div>
-            <div class="rv-form__field">
-              <label for="rv-role" class="rv-form__label">Your Role / Company</label>
-              <input type="text" id="rv-role" name="role" class="rv-form__input" placeholder="e.g. Manager at Acme Corp" required />
-            </div>
-          </div>
+            <div class="review-stars">${stars}</div>
+            <div class="review-text">${escapeHtml(r.review_text)}</div>
+            <div class="review-date">${date}</div>
+          </div>`;
+      }).join('');
+    }
 
-          <div class="rv-form__field">
-            <label class="rv-form__label">Rating</label>
-            <div class="rv-form__stars" id="starRating">
-              <button type="button" class="rv-star" data-rating="1" aria-label="1 star">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </button>
-              <button type="button" class="rv-star" data-rating="2" aria-label="2 stars">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </button>
-              <button type="button" class="rv-star" data-rating="3" aria-label="3 stars">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </button>
-              <button type="button" class="rv-star" data-rating="4" aria-label="4 stars">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </button>
-              <button type="button" class="rv-star" data-rating="5" aria-label="5 stars">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </button>
-            </div>
-            <input type="hidden" name="rating" id="ratingValue" value="5" />
-          </div>
+    function updateStats(reviews) {
+      const total = reviews.length;
+      const avg = total > 0 
+        ? (reviews.reduce((s, r) => s + r.star_rating, 0) / total).toFixed(1) 
+        : '—';
+      const fiveStars = reviews.filter(r => r.star_rating === 5).length;
 
-          <div class="rv-form__field">
-            <label for="rv-message" class="rv-form__label">Your Review</label>
-            <textarea id="rv-message" name="review" class="rv-form__input rv-form__textarea" placeholder="Share your experience working with me..." rows="4" required></textarea>
-          </div>
+      document.getElementById('totalReviews').textContent = total || '—';
+      document.getElementById('avgRating').textContent = total > 0 ? `${avg} ★` : '—';
+      document.getElementById('fiveStarCount').textContent = fiveStars || '—';
+    }
 
-          <button type="submit" class="btn btn--primary btn--full" id="reviewSubmit">
-            Submit Review
-            <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-          <p class="rv-form__success" id="reviewSuccess" style="display:none;">Thanks for your review! It will appear here once approved.</p>
-        </form>
-      </div>
-    </div>
-  </section>
+    // ════════════════════════════════════════════════════
+    // MODAL CONTROL
+    // ════════════════════════════════════════════════════
+    function openModal() {
+      document.getElementById('reviewModal').classList.add('active');
+      if (currentUser) {
+        showStep(2);
+        populateUserBar();
+      } else {
+        showStep(1);
+      }
+    }
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="footer__container">
-      <div class="footer__left">
-        <a href="index.html" class="nav__logo">AS</a>
-        <p class="footer__copy">Designed & built by Akshay Sharma</p>
-      </div>
-      <div class="footer__socials">
-        <a href="https://www.linkedin.com/in/akshay-sharma05/" target="_blank" rel="noopener noreferrer" class="hero__social" aria-label="LinkedIn">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        </a>
-        <a href="https://github.com/akshays05" target="_blank" rel="noopener noreferrer" class="hero__social" aria-label="GitHub">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-        </a>
-      </div>
-    </div>
-  </footer>
+    function closeModal() {
+      document.getElementById('reviewModal').classList.remove('active');
+      // Reset form
+      selectedRating = 0;
+      document.querySelectorAll('#starInput button').forEach(b => b.classList.remove('active'));
+      document.getElementById('reviewText').value = '';
+      document.getElementById('relationship').value = '';
+      document.getElementById('charCount').textContent = '0';
+      document.getElementById('submitBtn').disabled = true;
+    }
 
-  <script src="js/reviews.js"></script>
+    function showStep(n) {
+      document.querySelectorAll('.modal-step').forEach(s => s.style.display = 'none');
+      document.getElementById(`step${n}`).style.display = 'block';
+    }
+
+    // ════════════════════════════════════════════════════
+    // GOOGLE AUTH
+    // ════════════════════════════════════════════════════
+    async function signInWithGoogle() {
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.href
+        }
+      });
+      if (error) showToast('Sign-in failed. Please try again.');
+    }
+
+    function populateUserBar() {
+      if (!currentUser) return;
+      const meta = currentUser.user_metadata || {};
+      const name = meta.full_name || meta.name || 'You';
+      const email = currentUser.email || '';
+      const avatar = meta.avatar_url || meta.picture || '';
+
+      document.getElementById('userBar').innerHTML = `
+        ${avatar ? `<img src="${avatar}" alt="${name}">` : ''}
+        <div class="user-info">
+          <div class="user-name">${escapeHtml(name)}</div>
+          <div class="user-email">${escapeHtml(email)}</div>
+        </div>`;
+    }
+
+    // ════════════════════════════════════════════════════
+    // STAR RATING
+    // ════════════════════════════════════════════════════
+    function setRating(n) {
+      selectedRating = n;
+      document.querySelectorAll('#starInput button').forEach((btn, i) => {
+        btn.classList.toggle('active', i < n);
+      });
+      validateForm();
+    }
+
+    // ════════════════════════════════════════════════════
+    // FORM VALIDATION
+    // ════════════════════════════════════════════════════
+    function updateCharCount() {
+      const len = document.getElementById('reviewText').value.length;
+      document.getElementById('charCount').textContent = len;
+      validateForm();
+    }
+
+    function validateForm() {
+      const text = document.getElementById('reviewText').value.trim();
+      const rel = document.getElementById('relationship').value;
+      const valid = selectedRating > 0 && text.length >= 10 && rel !== '';
+      document.getElementById('submitBtn').disabled = !valid;
+    }
+
+    // Also validate when relationship changes
+    document.getElementById('relationship').addEventListener('change', validateForm);
+
+    // ════════════════════════════════════════════════════
+    // SUBMIT REVIEW
+    // ════════════════════════════════════════════════════
+    async function submitReview() {
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      const meta = currentUser.user_metadata || {};
+      const reviewData = {
+        reviewer_name: meta.full_name || meta.name || 'Anonymous',
+        reviewer_email: currentUser.email,
+        reviewer_avatar_url: meta.avatar_url || meta.picture || null,
+        star_rating: selectedRating,
+        review_text: document.getElementById('reviewText').value.trim(),
+        relationship: document.getElementById('relationship').value
+      };
+
+      const { error } = await sb.from('reviews').insert([reviewData]);
+
+      if (error) {
+        showToast('Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Submit Review';
+        return;
+      }
+
+      showStep(3);
+    }
+
+    // ════════════════════════════════════════════════════
+    // UTILS
+    // ════════════════════════════════════════════════════
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('reviewModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
 </body>
 </html>
