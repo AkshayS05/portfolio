@@ -1402,6 +1402,13 @@ img {
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
 }
 
+.testimonial-card__stars {
+  font-size: 1.125rem;
+  color: #f59e0b;
+  letter-spacing: 2px;
+  margin-bottom: 0.75rem;
+}
+
 .testimonial-card__text {
   font-size: 0.9375rem;
   color: var(--color-secondary);

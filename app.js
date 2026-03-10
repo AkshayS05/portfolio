@@ -155,8 +155,12 @@ if (testimonialGrid) {
 
       if (!reviews.length) return;
 
-      testimonialGrid.innerHTML = reviews.map(r => `
+      testimonialGrid.innerHTML = reviews.map(r => {
+        const rating = r.star_rating || 5;
+        const stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
+        return `
         <blockquote class="testimonial-card">
+          <div class="testimonial-card__stars">${stars}</div>
           <p class="testimonial-card__text">"${escapeHtml(r.review_text)}"</p>
           <div class="testimonial-card__author">
             <div class="testimonial-card__avatar">
@@ -168,7 +172,7 @@ if (testimonialGrid) {
             </div>
           </div>
         </blockquote>
-      `).join('');
+      `;}).join('');
     } catch {
       // fallback — leave grid empty
     }
