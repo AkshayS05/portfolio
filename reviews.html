@@ -749,7 +749,7 @@
     // LOAD & DISPLAY REVIEWS
     // ════════════════════════════════════════════════════
     async function loadReviews() {
-      const { data: reviews, error } = await supabase
+      const { data: reviews, error } = await sb
         .from('reviews')
         .select('*')
         .eq('approved', true)
