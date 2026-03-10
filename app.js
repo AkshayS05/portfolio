@@ -135,3 +135,42 @@ if (contactForm) {
     }
   });
 }
+
+// ===== LOAD TESTIMONIALS FROM REVIEWS.JSON =====
+const testimonialGrid = document.getElementById('testimonialGrid');
+
+if (testimonialGrid) {
+  (async function () {
+    try {
+      const res = await fetch('data/reviews.json');
+      const reviews = await res.json();
+      const show = reviews.slice(0, 2); // show latest 2 on homepage
+
+      testimonialGrid.innerHTML = show.map(r => {
+        const initials = r.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        return `
+          <blockquote class="testimonial-card">
+            <p class="testimonial-card__text">"${escapeHtml(r.text)}"</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div>
+                <cite class="testimonial-card__name">${escapeHtml(r.name)}</cite>
+                <span class="testimonial-card__role">${escapeHtml(r.role)}</span>
+              </div>
+            </div>
+          </blockquote>
+        `;
+      }).join('');
+    } catch {
+      // fallback — leave grid empty
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  })();
+}
