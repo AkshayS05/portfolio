@@ -97,6 +97,13 @@ img {
   transform: scale(1.05);
 }
 
+.nav__logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
 .nav__links {
   display: flex;
   gap: 2rem;
@@ -220,6 +227,23 @@ img {
   background: var(--color-success);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Hero Avatar */
+.hero__avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1.5rem;
+  border: 3px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.15), 0 0 60px rgba(59, 130, 246, 0.05);
+}
+
+.hero__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Name */

@@ -293,30 +293,80 @@ const githubFeed = document.getElementById('githubFeed');
 if (githubFeed) {
   (async function () {
     try {
-      const res = await fetch('https://api.github.com/users/akshays05/events?per_page=15');
-      if (!res.ok) throw new Error('GitHub API error');
-      const events = await res.json();
+      // Fetch recent events + recent commits from repos
+      const [eventsRes, reposRes] = await Promise.all([
+        fetch('https://api.github.com/users/AkshayS05/events?per_page=30'),
+        fetch('https://api.github.com/users/AkshayS05/repos?sort=pushed&per_page=5'),
+      ]);
 
-      const pushEvents = events.filter(e => e.type === 'PushEvent').slice(0, 5);
-      if (!pushEvents.length) {
+      if (!eventsRes.ok && !reposRes.ok) throw new Error('GitHub API error');
+
+      let cards = [];
+
+      // Try to get commits from recent repos (more reliable)
+      if (reposRes.ok) {
+        const repos = await reposRes.json();
+        const commitPromises = repos.slice(0, 4).map(async (repo) => {
+          try {
+            const cRes = await fetch(`https://api.github.com/repos/${repo.full_name}/commits?per_page=2`);
+            if (!cRes.ok) return [];
+            const commits = await cRes.json();
+            return commits.map(c => ({
+              repo: repo.name,
+              message: c.commit.message.split('\n')[0],
+              time: new Date(c.commit.author.date),
+              type: 'commit'
+            }));
+          } catch { return []; }
+        });
+        const allCommits = (await Promise.all(commitPromises)).flat();
+        cards = allCommits;
+      }
+
+      // Fallback: use events if no commits found
+      if (!cards.length && eventsRes.ok) {
+        const events = await eventsRes.json();
+        const supported = events.filter(e => ['PushEvent', 'CreateEvent', 'PullRequestEvent'].includes(e.type)).slice(0, 8);
+        cards = supported.map(ev => {
+          const repo = ev.repo.name.split('/')[1] || ev.repo.name;
+          let message = '';
+          if (ev.type === 'PushEvent') {
+            message = (ev.payload.commits && ev.payload.commits.length)
+              ? ev.payload.commits[ev.payload.commits.length - 1].message
+              : `Pushed to ${ev.payload.ref.replace('refs/heads/', '')}`;
+          } else if (ev.type === 'CreateEvent') {
+            message = `Created ${ev.payload.ref_type} ${ev.payload.ref || ''}`.trim();
+          } else if (ev.type === 'PullRequestEvent') {
+            message = `${ev.payload.action} PR: ${ev.payload.pull_request.title}`;
+          }
+          return { repo, message: message.split('\n')[0], time: new Date(ev.created_at), type: ev.type };
+        });
+      }
+
+      if (!cards.length) {
         document.getElementById('github-activity').style.display = 'none';
         return;
       }
 
-      githubFeed.innerHTML = pushEvents.map(ev => {
-        const repo = ev.repo.name.split('/')[1] || ev.repo.name;
-        const commit = ev.payload.commits && ev.payload.commits.length
-          ? ev.payload.commits[ev.payload.commits.length - 1].message
-          : 'No commit message';
-        const msg = commit.length > 80 ? commit.substring(0, 77) + '...' : commit;
-        const time = timeAgo(new Date(ev.created_at));
+      // Sort by time, take 6, deduplicate by message
+      const seen = new Set();
+      const unique = cards
+        .sort((a, b) => b.time - a.time)
+        .filter(c => {
+          const key = c.repo + c.message;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .slice(0, 6);
+
+      githubFeed.innerHTML = unique.map(c => {
+        const msg = c.message.length > 70 ? c.message.substring(0, 67) + '...' : c.message;
+        const time = timeAgo(c.time);
         return `
           <div class="github-event">
-            <div class="github-event__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            </div>
             <div class="github-event__body">
-              <div class="github-event__repo">${escapeHtml(repo)}</div>
+              <div class="github-event__repo">${escapeHtml(c.repo)}</div>
               <div class="github-event__message">${escapeHtml(msg)}</div>
             </div>
             <div class="github-event__time">${time}</div>

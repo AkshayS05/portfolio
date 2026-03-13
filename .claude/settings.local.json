@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:akshays05.github.io)"
+      "WebFetch(domain:akshays05.github.io)",
+      "Bash(curl:*)"
     ]
   }
 }
