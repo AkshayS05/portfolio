@@ -1,15 +1,75 @@
-// ===== HEADER SCROLL EFFECT =====
+// ===== HEADER SCROLL EFFECT + SCROLL PROGRESS + BACK TO TOP =====
 const header = document.querySelector('.header');
+const scrollProgress = document.getElementById('scrollProgress');
+const backToTop = document.getElementById('backToTop');
 
 const handleScroll = () => {
+  // Header
   if (window.scrollY > 50) {
     header.classList.add('header--scrolled');
   } else {
     header.classList.remove('header--scrolled');
   }
+
+  // Scroll progress bar
+  if (scrollProgress) {
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+    scrollProgress.style.width = pct + '%';
+  }
+
+  // Back to top button
+  if (backToTop) {
+    if (window.scrollY > 600) {
+      backToTop.classList.add('back-to-top--visible');
+    } else {
+      backToTop.classList.remove('back-to-top--visible');
+    }
+  }
 };
 
 window.addEventListener('scroll', handleScroll);
+
+if (backToTop) {
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// ===== CURSOR GLOW (desktop only) =====
+const cursorGlow = document.getElementById('cursorGlow');
+if (cursorGlow && window.matchMedia('(pointer: fine)').matches) {
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.left = e.clientX + 'px';
+    cursorGlow.style.top = e.clientY + 'px';
+  });
+}
+
+// ===== HERO TEXT SCRAMBLE =====
+(function () {
+  const heroName = document.querySelector('.hero__name');
+  if (!heroName) return;
+
+  const finalText = heroName.textContent;
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&';
+  let iteration = 0;
+
+  heroName.style.opacity = '1';
+
+  const interval = setInterval(() => {
+    heroName.textContent = finalText
+      .split('')
+      .map((char, i) => {
+        if (char === ' ') return ' ';
+        if (i < iteration) return finalText[i];
+        return chars[Math.floor(Math.random() * chars.length)];
+      })
+      .join('');
+
+    if (iteration >= finalText.length) clearInterval(interval);
+    iteration += 1 / 2;
+  }, 35);
+})();
 
 // ===== MOBILE NAV TOGGLE =====
 const mobileToggle = document.querySelector('.nav__mobile-toggle');
