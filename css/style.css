@@ -574,21 +574,26 @@ img {
 .about__image-wrapper {
   position: relative;
   width: 100%;
-  max-width: 360px;
+  max-width: 380px;
+  aspect-ratio: 4 / 5;
 }
 
 .about__photo {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
-  border-radius: 16px;
+  height: 100%;
+  border-radius: 20px;
   object-fit: cover;
-  filter: grayscale(15%);
-  transition: filter 0.3s ease;
+  object-position: top center;
+  filter: grayscale(10%) contrast(1.05);
+  transition: filter 0.4s ease, transform 0.4s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-.about__photo:hover {
-  filter: grayscale(0%);
+.about__image-wrapper:hover .about__photo {
+  filter: grayscale(0%) contrast(1.08);
+  transform: scale(1.02);
 }
 
 .about__image-accent {
@@ -597,10 +602,101 @@ img {
   right: -12px;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 20px;
   border: 2px solid var(--color-accent);
-  opacity: 0.2;
+  opacity: 0.15;
   z-index: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.about__image-wrapper:hover .about__image-accent {
+  opacity: 0.3;
+  transform: translate(4px, 4px);
+}
+
+/* Rotating rings */
+.about__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(59, 130, 246, 0.15);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.about__ring--outer {
+  width: 115%;
+  height: 115%;
+  top: -7.5%;
+  left: -7.5%;
+  animation: aboutRingSpin 25s linear infinite;
+}
+
+.about__ring--inner {
+  width: 108%;
+  height: 108%;
+  top: -4%;
+  left: -4%;
+  border-color: rgba(139, 92, 246, 0.12);
+  border-style: dotted;
+  animation: aboutRingSpin 18s linear infinite reverse;
+}
+
+@keyframes aboutRingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Floating dots */
+.about__dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.about__dot--1 {
+  top: 8%;
+  right: -6%;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+  animation: aboutDotFloat1 4s ease-in-out infinite;
+}
+
+.about__dot--2 {
+  bottom: 15%;
+  left: -5%;
+  width: 7px;
+  height: 7px;
+  background: #8B5CF6;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  animation: aboutDotFloat2 5s ease-in-out infinite;
+}
+
+.about__dot--3 {
+  top: 45%;
+  right: -8%;
+  width: 5px;
+  height: 5px;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+  animation: aboutDotFloat3 3.5s ease-in-out infinite;
+}
+
+@keyframes aboutDotFloat1 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-4px, -10px); }
+}
+
+@keyframes aboutDotFloat2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(6px, -8px); }
+}
+
+@keyframes aboutDotFloat3 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-5px, 6px); }
 }
 
 /* Text column */
@@ -2583,4 +2679,119 @@ body {
   .hero__actions .btn--calendly {
     display: none;
   }
+}
+
+/* ===== STAGGER ANIMATIONS ===== */
+
+/* Cards & items slide up with stagger when section is visible */
+.section--visible .services__card,
+.section--visible .project-card,
+.section--visible .edu-card,
+.section--visible .exp-card,
+.section--visible .testimonial-card,
+.section--visible .stack__group,
+.section--visible .github-event,
+.section--visible .current-card,
+.section--visible .about__highlight {
+  animation: staggerUp 0.5s ease both;
+}
+
+.section--visible *:nth-child(1) { animation-delay: 0s; }
+.section--visible *:nth-child(2) { animation-delay: 0.08s; }
+.section--visible *:nth-child(3) { animation-delay: 0.16s; }
+.section--visible *:nth-child(4) { animation-delay: 0.24s; }
+.section--visible *:nth-child(5) { animation-delay: 0.32s; }
+.section--visible *:nth-child(6) { animation-delay: 0.4s; }
+
+@keyframes staggerUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* About image cinematic reveal */
+.section--visible .about__image-wrapper {
+  animation: aboutReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aboutReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* About text slide from right */
+.section--visible .about__text-col {
+  animation: aboutTextReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+@keyframes aboutTextReveal {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hero avatar pulse glow */
+.hero__avatar {
+  animation: avatarGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes avatarGlow {
+  from {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15), 0 0 40px rgba(59, 130, 246, 0.05);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Stat numbers count-up feel */
+.section--visible .hero__stat-number {
+  animation: statPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.section--visible .hero__stat:nth-child(1) .hero__stat-number { animation-delay: 0.1s; }
+.section--visible .hero__stat:nth-child(3) .hero__stat-number { animation-delay: 0.2s; }
+.section--visible .hero__stat:nth-child(5) .hero__stat-number { animation-delay: 0.3s; }
+
+@keyframes statPop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Skill tag shimmer on hover */
+.services__card-tags li,
+.project-card__tags li,
+.exp-card__tags span,
+.current-card__tag {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.services__card-tags li:hover,
+.project-card__tags li:hover,
+.exp-card__tags span:hover,
+.current-card__tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
 }
