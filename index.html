@@ -57,6 +57,15 @@
           <li><a href="#contact" class="nav__link">Contact</a></li>
         </ul>
 
+        <button class="nav__theme-toggle" aria-label="Toggle theme" id="themeToggle">
+          <svg class="theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
         <a href="Sharma_Akshay_Resume.pdf" class="nav__cta" data-resume-link>Download Resume</a>
 
         <button class="nav__mobile-toggle" aria-label="Toggle navigation">
@@ -75,6 +84,11 @@
         <span class="hero__badge">
           <span class="hero__badge-dot"></span>
           Open to Opportunities
+        </span>
+
+        <span class="hero__visitor-count" id="visitorCount" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="visitorNumber">0</span>+ portfolio views
         </span>
 
         <h1 class="hero__name">Akshay Sharma</h1>
@@ -125,6 +139,12 @@
             Download Resume
           </a>
           <a href="#contact" class="btn btn--outline">Get in Touch</a>
+          <a href="#" class="btn btn--outline btn--calendly" onclick="Calendly.initPopupWidget({url:'https://calendly.com/YOUR_LINK'});return false;">
+            <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Book a Call
+          </a>
         </div>
 
         <div class="hero__socials">
@@ -288,6 +308,15 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ===== WHAT I'M WORKING ON ===== -->
+    <section id="current" class="current section">
+      <div class="current__container">
+        <span class="section__label">Right Now</span>
+        <h2 class="section__heading">What I'm working on</h2>
+        <div class="current__items" id="currentItems"><!-- JS populated --></div>
       </div>
     </section>
 
@@ -1245,6 +1274,15 @@
       </div>
     </section>
 
+    <!-- ===== GITHUB ACTIVITY ===== -->
+    <section id="github-activity" class="github section">
+      <div class="github__container">
+        <span class="section__label">Open Source</span>
+        <h2 class="section__heading">Recent GitHub Activity</h2>
+        <div class="github__feed" id="githubFeed"><!-- JS populated --></div>
+      </div>
+    </section>
+
     <!-- ===== TESTIMONIALS ===== -->
     <section id="testimonials" class="testimonials section">
       <div class="testimonials__container">
@@ -1253,6 +1291,10 @@
           <h2 class="section__heading">
             What people say about working with me.
           </h2>
+          <span class="testimonials__count" id="testimonialCount" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span id="endorsementNumber">0</span>+ Endorsements
+          </span>
         </div>
 
         <div class="testimonials__grid" id="testimonialGrid">
@@ -1282,6 +1324,7 @@
             >leave a review</a
           >
         </p>
+        <a href="reviews.html" class="btn btn--primary testimonials__cta">Leave a Recommendation</a>
       </div>
     </section>
 
@@ -1342,6 +1385,21 @@
                 />
               </svg>
               <span>GitHub</span>
+            </a>
+          </div>
+
+          <div class="contact__calendly-card">
+            <div class="contact__calendly-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="contact__calendly-title">Prefer a quick chat?</h3>
+              <p class="contact__calendly-desc">Book a 15-minute intro call and let's discuss your project or opportunity.</p>
+            </div>
+            <a href="#" class="btn btn--primary btn--sm" onclick="Calendly.initPopupWidget({url:'https://calendly.com/YOUR_LINK'});return false;">
+              Schedule Call
             </a>
           </div>
         </div>
@@ -1470,6 +1528,39 @@
         </div>
       </div>
     </footer>
+
+    <!-- Resume Modal -->
+    <div class="resume-modal" id="resumeModal">
+      <div class="resume-modal__backdrop"></div>
+      <div class="resume-modal__content">
+        <button class="resume-modal__close" aria-label="Close">&times;</button>
+        <iframe class="resume-modal__viewer" id="resumeViewer" src=""></iframe>
+        <a class="resume-modal__download btn btn--primary" id="resumeDownload" href="" download>
+          <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <div class="shortcuts-modal" id="shortcutsModal">
+      <div class="shortcuts-modal__backdrop"></div>
+      <div class="shortcuts-modal__content">
+        <h3>Keyboard Shortcuts</h3>
+        <div class="shortcuts-list">
+          <div class="shortcuts-list__item"><kbd>1</kbd><span>Power Platform view</span></div>
+          <div class="shortcuts-list__item"><kbd>2</kbd><span>Full Stack view</span></div>
+          <div class="shortcuts-list__item"><kbd>3</kbd><span>Explorer view</span></div>
+          <div class="shortcuts-list__item"><kbd>R</kbd><span>Download resume</span></div>
+          <div class="shortcuts-list__item"><kbd>D</kbd><span>Toggle dark/light mode</span></div>
+          <div class="shortcuts-list__item"><kbd>?</kbd><span>Show this help</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendly widget -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"/>
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
     <script src="app.js"></script>
     <script src="visitor-selector.js"></script>

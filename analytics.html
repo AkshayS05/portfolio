@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Analytics Dashboard</title>
+    <link rel="icon" href="assets/favicon.jpg" type="image/jpeg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+      :root {
+        --bg: #0F172A;
+        --bg-card: #1E293B;
+        --border: #334155;
+        --text: #F1F5F9;
+        --text-muted: #94A3B8;
+        --accent: #3B82F6;
+        --green: #10B981;
+        --purple: #8B5CF6;
+        --amber: #F59E0B;
+        --red: #EF4444;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .dashboard {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      .dashboard__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .dashboard__title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .dashboard__back {
+        font-size: 0.875rem;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .dashboard__back:hover { text-decoration: underline; }
+
+      /* Stats grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+      }
+
+      .stat-card__label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-card__value {
+        font-size: 2rem;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: -0.02em;
+      }
+
+      .stat-card__value--accent { color: var(--accent); }
+      .stat-card__value--green { color: var(--green); }
+      .stat-card__value--purple { color: var(--purple); }
+      .stat-card__value--amber { color: var(--amber); }
+
+      /* Charts */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        .charts-grid { grid-template-columns: 1fr; }
+      }
+
+      .chart-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+      }
+
+      .chart-card__title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+      }
+
+      /* Bar chart */
+      .bar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+
+      .bar-chart__row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .bar-chart__label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        width: 100px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .bar-chart__track {
+        flex: 1;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .bar-chart__fill {
+        height: 100%;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding-left: 8px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        color: #fff;
+        transition: width 0.6s ease;
+      }
+
+      /* Donut chart */
+      .donut-container {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .donut {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .donut__center {
+        position: absolute;
+        inset: 25%;
+        background: var(--bg-card);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      .donut-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .donut-legend__item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+      }
+
+      .donut-legend__dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* Recent activity */
+      .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        font-size: 0.8125rem;
+      }
+
+      .activity-item__type {
+        font-weight: 600;
+        color: var(--accent);
+        min-width: 110px;
+      }
+
+      .activity-item__role {
+        color: var(--text-muted);
+        min-width: 100px;
+      }
+
+      .activity-item__time {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+
+      /* Login */
+      .login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .login__card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2.5rem;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+      }
+
+      .login__title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .login__input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        outline: none;
+      }
+
+      .login__input:focus { border-color: var(--accent); }
+
+      .login__btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .login__btn:hover { background: #2563EB; }
+
+      .login__error {
+        color: var(--red);
+        font-size: 0.8125rem;
+        margin-top: 0.5rem;
+        display: none;
+      }
+
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <!-- Login Screen -->
+    <div class="login" id="loginScreen">
+      <div class="login__card">
+        <h1 class="login__title">Analytics Dashboard</h1>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Enter password to view analytics</p>
+        <input type="password" class="login__input" id="loginPassword" placeholder="Password" autofocus />
+        <button class="login__btn" id="loginBtn">Access Dashboard</button>
+        <p class="login__error" id="loginError">Incorrect password. Try again.</p>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard hidden" id="dashboardScreen">
+      <div class="dashboard__header">
+        <h1 class="dashboard__title">Portfolio Analytics</h1>
+        <a href="index.html" class="dashboard__back">&larr; Back to Portfolio</a>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-card__label">Total Views</div>
+          <div class="stat-card__value stat-card__value--accent" id="statViews">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Resume Downloads</div>
+          <div class="stat-card__value stat-card__value--green" id="statDownloads">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Calendly Clicks</div>
+          <div class="stat-card__value stat-card__value--purple" id="statCalendly">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Role Selections</div>
+          <div class="stat-card__value stat-card__value--amber" id="statRoles">-</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3 class="chart-card__title">Visitors by Role</h3>
+          <div class="donut-container" id="roleDonut">
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Loading...</p>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-card__title">Section Engagement</h3>
+          <div class="bar-chart" id="sectionBars">
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="chart-card__title">Recent Activity</h3>
+        <div class="activity-list" id="activityList">
+          <p style="color: var(--text-muted); font-size: 0.875rem;">Loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const SUPABASE_URL = 'https://vowfihujcrkmgnsigjxm.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvd2ZpaHVqY3JrbWduc2lnanhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDk4NTEsImV4cCI6MjA4ODA4NTg1MX0.TEuCa1TOmLp82ZBoWgyBdDY-CjaOoSlWVVEwfdXt_pQ';
+      const ANALYTICS_PASS = 'akshay2024';
+
+      // Login
+      const loginScreen = document.getElementById('loginScreen');
+      const dashboardScreen = document.getElementById('dashboardScreen');
+      const loginBtn = document.getElementById('loginBtn');
+      const loginPassword = document.getElementById('loginPassword');
+      const loginError = document.getElementById('loginError');
+
+      if (localStorage.getItem('analytics_auth') === 'true') {
+        showDashboard();
+      }
+
+      loginBtn.addEventListener('click', tryLogin);
+      loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
+
+      function tryLogin() {
+        if (loginPassword.value === ANALYTICS_PASS) {
+          localStorage.setItem('analytics_auth', 'true');
+          showDashboard();
+        } else {
+          loginError.style.display = 'block';
+        }
+      }
+
+      function showDashboard() {
+        loginScreen.classList.add('hidden');
+        dashboardScreen.classList.remove('hidden');
+        loadAnalytics();
+      }
+
+      async function sbFetch(query) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${query}`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        });
+        return res.json();
+      }
+
+      async function sbCount(filter) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/portfolio_analytics?${filter}&select=id`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'count=exact',
+            'Range': '0-0',
+          },
+        });
+        const range = res.headers.get('content-range');
+        return range ? parseInt(range.split('/')[1], 10) : 0;
+      }
+
+      async function loadAnalytics() {
+        try {
+          // Stat counts
+          const [views, downloads, calendly, roles] = await Promise.all([
+            sbCount('event_type=eq.page_view'),
+            sbCount('event_type=eq.resume_download'),
+            sbCount('event_type=eq.calendly_click'),
+            sbCount('event_type=eq.role_select'),
+          ]);
+
+          document.getElementById('statViews').textContent = views;
+          document.getElementById('statDownloads').textContent = downloads;
+          document.getElementById('statCalendly').textContent = calendly;
+          document.getElementById('statRoles').textContent = roles;
+
+          // Role breakdown
+          const roleEvents = await sbFetch('portfolio_analytics?event_type=eq.role_select&select=visitor_role');
+          const roleCounts = {};
+          roleEvents.forEach(e => {
+            const r = e.visitor_role || 'unknown';
+            roleCounts[r] = (roleCounts[r] || 0) + 1;
+          });
+          renderDonut(roleCounts);
+
+          // Section engagement
+          const sectionEvents = await sbFetch('portfolio_analytics?event_type=eq.section_view&select=event_data');
+          const sectionCounts = {};
+          sectionEvents.forEach(e => {
+            const s = (e.event_data && e.event_data.section) || 'unknown';
+            sectionCounts[s] = (sectionCounts[s] || 0) + 1;
+          });
+          renderBars(sectionCounts);
+
+          // Recent activity
+          const recent = await sbFetch('portfolio_analytics?order=created_at.desc&limit=30');
+          renderActivity(recent);
+        } catch (err) {
+          console.error('Analytics load error:', err);
+        }
+      }
+
+      function renderDonut(data) {
+        const container = document.getElementById('roleDonut');
+        const total = Object.values(data).reduce((a, b) => a + b, 0);
+        if (!total) { container.innerHTML = '<p style="color:var(--text-muted)">No data yet</p>'; return; }
+
+        const colors = { powerplatform: '#8B5CF6', fullstack: '#3B82F6', guest: '#F59E0B', unknown: '#64748B' };
+        const labels = { powerplatform: 'Power Platform', fullstack: 'Full Stack', guest: 'Explorer', unknown: 'Unknown' };
+
+        let gradient = '';
+        let current = 0;
+        const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+        entries.forEach(([role, count]) => {
+          const pct = (count / total) * 100;
+          const color = colors[role] || '#64748B';
+          gradient += `${color} ${current}% ${current + pct}%, `;
+          current += pct;
+        });
+        gradient = gradient.slice(0, -2);
+
+        const legendHtml = entries.map(([role, count]) => {
+          const color = colors[role] || '#64748B';
+          const label = labels[role] || role;
+          const pct = Math.round((count / total) * 100);
+          return `<div class="donut-legend__item"><span class="donut-legend__dot" style="background:${color}"></span>${label} (${pct}%)</div>`;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="donut" style="background:conic-gradient(${gradient})">
+            <div class="donut__center">${total}</div>
+          </div>
+          <div class="donut-legend">${legendHtml}</div>
+        `;
+      }
+
+      function renderBars(data) {
+        const container = document.getElementById('sectionBars');
+        const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+        if (!entries.length) { container.innerHTML = '<p style="color:var(--text-muted)">No data yet</p>'; return; }
+
+        const max = entries[0][1];
+        const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#F97316'];
+
+        container.innerHTML = entries.map(([section, count], i) => {
+          const pct = Math.round((count / max) * 100);
+          const color = colors[i % colors.length];
+          return `
+            <div class="bar-chart__row">
+              <span class="bar-chart__label">${section}</span>
+              <div class="bar-chart__track">
+                <div class="bar-chart__fill" style="width:${pct}%;background:${color}">${count}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderActivity(events) {
+        const container = document.getElementById('activityList');
+        if (!events.length) { container.innerHTML = '<p style="color:var(--text-muted)">No activity yet</p>'; return; }
+
+        const typeLabels = {
+          page_view: 'Page View',
+          role_select: 'Role Select',
+          section_view: 'Section View',
+          resume_download: 'Resume DL',
+          calendly_click: 'Calendly Click',
+        };
+
+        container.innerHTML = events.map(ev => {
+          const type = typeLabels[ev.event_type] || ev.event_type;
+          const role = ev.visitor_role || '-';
+          const time = new Date(ev.created_at).toLocaleString();
+          const detail = ev.event_data && ev.event_data.section ? ev.event_data.section : '';
+          return `
+            <div class="activity-item">
+              <span class="activity-item__type">${type}</span>
+              <span class="activity-item__role">${role}</span>
+              <span>${detail}</span>
+              <span class="activity-item__time">${time}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    </script>
+  </body>
+</html>

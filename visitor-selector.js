@@ -598,6 +598,8 @@
           ov.remove();
         }, 500);
         applyRole(role, true);
+        // Dispatch custom event for analytics
+        document.dispatchEvent(new CustomEvent('visitor-role-selected', { detail: { role: role } }));
       });
     });
 

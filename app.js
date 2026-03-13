@@ -136,16 +136,102 @@ if (contactForm) {
   });
 }
 
-// ===== LOAD TESTIMONIALS FROM SUPABASE =====
+// ===== SUPABASE CONFIG =====
+const SUPABASE_URL = 'https://vowfihujcrkmgnsigjxm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvd2ZpaHVqY3JrbWduc2lnanhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDk4NTEsImV4cCI6MjA4ODA4NTg1MX0.TEuCa1TOmLp82ZBoWgyBdDY-CjaOoSlWVVEwfdXt_pQ';
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ===== ANALYTICS TRACKER (Feature 2) =====
+const Analytics = {
+  _tracked: new Set(),
+  _role: null,
+
+  setRole(role) {
+    this._role = role;
+  },
+
+  track(eventType, data) {
+    fetch(`${SUPABASE_URL}/rest/v1/portfolio_analytics`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        event_type: eventType,
+        visitor_role: this._role || sessionStorage.getItem('akshay_visitor_role') || null,
+        event_data: data || {}
+      })
+    }).catch(() => {});
+  },
+
+  trackPageView() {
+    if (sessionStorage.getItem('_pv_tracked')) return;
+    sessionStorage.setItem('_pv_tracked', '1');
+    this.track('page_view', { page: window.location.pathname });
+  },
+
+  trackSectionView(sectionId) {
+    const key = `_sv_${sectionId}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+    this.track('section_view', { section: sectionId });
+  },
+
+  init() {
+    this.trackPageView();
+
+    // Section view tracking via IntersectionObserver
+    const sects = document.querySelectorAll('.section[id]');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.trackSectionView(entry.target.id);
+        }
+      });
+    }, { threshold: 0.3 });
+    sects.forEach(s => obs.observe(s));
+
+    // Resume download tracking
+    document.querySelectorAll('[data-resume-link]').forEach(el => {
+      el.addEventListener('click', () => {
+        this.track('resume_download', { href: el.href || '' });
+      });
+    });
+
+    // Calendly click tracking
+    document.querySelectorAll('.btn--calendly, .contact__calendly-card .btn').forEach(el => {
+      el.addEventListener('click', () => {
+        this.track('calendly_click');
+      });
+    });
+  }
+};
+
+Analytics.init();
+
+// Listen for role selection from visitor-selector
+document.addEventListener('visitor-role-selected', (e) => {
+  if (e.detail && e.detail.role) {
+    Analytics.setRole(e.detail.role);
+    Analytics.track('role_select', { role: e.detail.role });
+  }
+});
+
+// ===== LOAD TESTIMONIALS FROM SUPABASE (Feature 3 enhanced) =====
 const testimonialGrid = document.getElementById('testimonialGrid');
 
 if (testimonialGrid) {
   (async function () {
-    const SUPABASE_URL = 'https://vowfihujcrkmgnsigjxm.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvd2ZpaHVqY3JrbWduc2lnanhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDk4NTEsImV4cCI6MjA4ODA4NTg1MX0.TEuCa1TOmLp82ZBoWgyBdDY-CjaOoSlWVVEwfdXt_pQ';
-
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?approved=eq.true&order=created_at.desc&limit=2`, {
+      // Fetch testimonials (3 instead of 2)
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?approved=eq.true&order=created_at.desc&limit=3`, {
         headers: {
           'apikey': SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
@@ -173,14 +259,287 @@ if (testimonialGrid) {
           </div>
         </blockquote>
       `;}).join('');
+
+      // Fetch total count for badge
+      const countRes = await fetch(`${SUPABASE_URL}/rest/v1/reviews?approved=eq.true&select=id`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'count=exact',
+          'Range': '0-0',
+        },
+      });
+      const range = countRes.headers.get('content-range');
+      if (range) {
+        const total = parseInt(range.split('/')[1], 10);
+        if (total > 0) {
+          const countEl = document.getElementById('testimonialCount');
+          const numEl = document.getElementById('endorsementNumber');
+          if (countEl && numEl) {
+            numEl.textContent = total;
+            countEl.style.display = '';
+          }
+        }
+      }
     } catch {
       // fallback — leave grid empty
     }
+  })();
+}
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+// ===== GITHUB ACTIVITY WIDGET (Feature 4) =====
+const githubFeed = document.getElementById('githubFeed');
+
+if (githubFeed) {
+  (async function () {
+    try {
+      const res = await fetch('https://api.github.com/users/akshays05/events?per_page=15');
+      if (!res.ok) throw new Error('GitHub API error');
+      const events = await res.json();
+
+      const pushEvents = events.filter(e => e.type === 'PushEvent').slice(0, 5);
+      if (!pushEvents.length) {
+        document.getElementById('github-activity').style.display = 'none';
+        return;
+      }
+
+      githubFeed.innerHTML = pushEvents.map(ev => {
+        const repo = ev.repo.name.split('/')[1] || ev.repo.name;
+        const commit = ev.payload.commits && ev.payload.commits.length
+          ? ev.payload.commits[ev.payload.commits.length - 1].message
+          : 'No commit message';
+        const msg = commit.length > 80 ? commit.substring(0, 77) + '...' : commit;
+        const time = timeAgo(new Date(ev.created_at));
+        return `
+          <div class="github-event">
+            <div class="github-event__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="github-event__body">
+              <div class="github-event__repo">${escapeHtml(repo)}</div>
+              <div class="github-event__message">${escapeHtml(msg)}</div>
+            </div>
+            <div class="github-event__time">${time}</div>
+          </div>
+        `;
+      }).join('');
+    } catch {
+      const section = document.getElementById('github-activity');
+      if (section) section.style.display = 'none';
     }
   })();
+}
+
+function timeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  const intervals = [
+    { label: 'year', seconds: 31536000 },
+    { label: 'month', seconds: 2592000 },
+    { label: 'week', seconds: 604800 },
+    { label: 'day', seconds: 86400 },
+    { label: 'hour', seconds: 3600 },
+    { label: 'minute', seconds: 60 },
+  ];
+  for (const i of intervals) {
+    const count = Math.floor(seconds / i.seconds);
+    if (count >= 1) return `${count} ${i.label}${count > 1 ? 's' : ''} ago`;
+  }
+  return 'just now';
+}
+
+// ===== PDF RESUME VIEWER MODAL (Feature 5) =====
+const resumeModal = document.getElementById('resumeModal');
+
+if (resumeModal) {
+  const resumeBackdrop = resumeModal.querySelector('.resume-modal__backdrop');
+  const resumeCloseBtn = resumeModal.querySelector('.resume-modal__close');
+  const resumeViewer = document.getElementById('resumeViewer');
+  const resumeDownloadLink = document.getElementById('resumeDownload');
+
+  const closeResumeModal = () => {
+    resumeModal.classList.remove('resume-modal--open');
+    resumeViewer.src = '';
+    document.body.style.overflow = '';
+  };
+
+  document.querySelectorAll('[data-resume-link]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.href || link.getAttribute('href');
+      // On mobile, let the default download behavior happen
+      if (window.innerWidth < 768) return;
+      e.preventDefault();
+      resumeViewer.src = href;
+      resumeDownloadLink.href = href;
+      resumeModal.classList.add('resume-modal--open');
+      document.body.style.overflow = 'hidden';
+      Analytics.track('resume_download', { href });
+    });
+  });
+
+  resumeCloseBtn.addEventListener('click', closeResumeModal);
+  resumeBackdrop.addEventListener('click', closeResumeModal);
+}
+
+// ===== "WHAT I'M WORKING ON" (Feature 6) =====
+const currentItems = document.getElementById('currentItems');
+
+if (currentItems) {
+  (async function () {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/current_status?visible=eq.true&order=display_order.asc`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      });
+      const items = await res.json();
+
+      if (!items.length) {
+        document.getElementById('current').style.display = 'none';
+        return;
+      }
+
+      currentItems.innerHTML = items.map(item => {
+        const tags = (item.tech_tags || []).map(t => `<span class="current-card__tag">${escapeHtml(t)}</span>`).join('');
+        return `
+          <div class="current-card">
+            <div class="current-card__header">
+              <span class="current-card__status current-card__status--${item.status}">${item.status === 'in_progress' ? 'In Progress' : item.status === 'planned' ? 'Planned' : 'Completed'}</span>
+            </div>
+            <h3 class="current-card__title">${escapeHtml(item.title)}</h3>
+            ${item.description ? `<p class="current-card__desc">${escapeHtml(item.description)}</p>` : ''}
+            ${tags ? `<div class="current-card__tags">${tags}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    } catch {
+      document.getElementById('current').style.display = 'none';
+    }
+  })();
+}
+
+// ===== DARK/LIGHT MODE TOGGLE (Feature 7) =====
+const themeToggle = document.getElementById('themeToggle');
+
+if (themeToggle) {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  // Listen for OS preference changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    }
+  });
+}
+
+// ===== VISITOR COUNTER BADGE (Feature 8) =====
+const visitorCountEl = document.getElementById('visitorCount');
+
+if (visitorCountEl) {
+  (async function () {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/portfolio_analytics?event_type=eq.page_view&select=id`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'count=exact',
+          'Range': '0-0',
+        },
+      });
+      const range = res.headers.get('content-range');
+      if (range) {
+        const total = parseInt(range.split('/')[1], 10);
+        if (total > 10) {
+          const rounded = Math.floor(total / 10) * 10;
+          const numEl = document.getElementById('visitorNumber');
+          if (numEl) {
+            numEl.textContent = rounded;
+            visitorCountEl.style.display = '';
+            // Animate count up
+            let current = 0;
+            const step = Math.ceil(rounded / 30);
+            const timer = setInterval(() => {
+              current = Math.min(current + step, rounded);
+              numEl.textContent = current;
+              if (current >= rounded) clearInterval(timer);
+            }, 30);
+          }
+        }
+      }
+    } catch {
+      // silently fail
+    }
+  })();
+}
+
+// ===== KEYBOARD SHORTCUTS (Feature 9) =====
+const shortcutsModal = document.getElementById('shortcutsModal');
+
+document.addEventListener('keydown', (e) => {
+  // Skip if user is typing in an input/textarea
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
+
+  switch (e.key) {
+    case '1':
+      sessionStorage.setItem('akshay_visitor_role', 'powerplatform');
+      location.reload();
+      break;
+    case '2':
+      sessionStorage.setItem('akshay_visitor_role', 'fullstack');
+      location.reload();
+      break;
+    case '3':
+      sessionStorage.setItem('akshay_visitor_role', 'guest');
+      location.reload();
+      break;
+    case 'r':
+    case 'R': {
+      const resumeLink = document.querySelector('[data-resume-link]');
+      if (resumeLink) resumeLink.click();
+      break;
+    }
+    case 'd':
+    case 'D':
+      if (themeToggle) themeToggle.click();
+      break;
+    case '?':
+      if (shortcutsModal) {
+        shortcutsModal.classList.toggle('shortcuts-modal--open');
+        document.body.style.overflow = shortcutsModal.classList.contains('shortcuts-modal--open') ? 'hidden' : '';
+      }
+      break;
+    case 'Escape':
+      // Close any open modal
+      if (shortcutsModal && shortcutsModal.classList.contains('shortcuts-modal--open')) {
+        shortcutsModal.classList.remove('shortcuts-modal--open');
+        document.body.style.overflow = '';
+      }
+      if (resumeModal && resumeModal.classList.contains('resume-modal--open')) {
+        resumeModal.classList.remove('resume-modal--open');
+        document.getElementById('resumeViewer').src = '';
+        document.body.style.overflow = '';
+      }
+      break;
+  }
+});
+
+// Close shortcuts modal on backdrop click
+if (shortcutsModal) {
+  shortcutsModal.querySelector('.shortcuts-modal__backdrop').addEventListener('click', () => {
+    shortcutsModal.classList.remove('shortcuts-modal--open');
+    document.body.style.overflow = '';
+  });
 }
