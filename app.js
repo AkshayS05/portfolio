@@ -36,13 +36,48 @@ if (backToTop) {
   });
 }
 
-// ===== CURSOR GLOW (desktop only) =====
+// ===== CURSOR GLOW + AVATAR EYE TRACKING (desktop only) =====
 const cursorGlow = document.getElementById('cursorGlow');
-if (cursorGlow && window.matchMedia('(pointer: fine)').matches) {
+const heroAvatar = document.querySelector('.hero__avatar');
+const heroAvatarImg = heroAvatar ? heroAvatar.querySelector('img') : null;
+
+if (window.matchMedia('(pointer: fine)').matches) {
   document.addEventListener('mousemove', (e) => {
-    cursorGlow.style.left = e.clientX + 'px';
-    cursorGlow.style.top = e.clientY + 'px';
+    // Cursor glow
+    if (cursorGlow) {
+      cursorGlow.style.left = e.clientX + 'px';
+      cursorGlow.style.top = e.clientY + 'px';
+    }
+
+    // Avatar eye-follow effect
+    if (heroAvatarImg && heroAvatar) {
+      const rect = heroAvatar.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      // Calculate offset from center of avatar (-1 to 1 range)
+      const dx = (e.clientX - centerX) / (window.innerWidth / 2);
+      const dy = (e.clientY - centerY) / (window.innerHeight / 2);
+
+      // Clamp values
+      const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+      const moveX = clamp(dx * 6, -6, 6);
+      const moveY = clamp(dy * 4, -4, 4);
+      const rotateY = clamp(dx * 8, -8, 8);
+      const rotateX = clamp(-dy * 5, -5, 5);
+
+      heroAvatarImg.style.transform = `translate(${moveX}px, ${moveY}px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) scale(1.08)`;
+    }
   });
+
+  // Reset on mouse leave
+  if (heroAvatar) {
+    document.addEventListener('mouseleave', () => {
+      if (heroAvatarImg) {
+        heroAvatarImg.style.transform = 'translate(0, 0) rotateY(0) rotateX(0) scale(1)';
+      }
+    });
+  }
 }
 
 // ===== HERO TEXT SCRAMBLE =====
