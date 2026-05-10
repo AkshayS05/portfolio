@@ -322,38 +322,69 @@ document.addEventListener('visitor-role-selected', (e) => {
 // ===== LOAD TESTIMONIALS FROM SUPABASE (Feature 3 enhanced) =====
 const testimonialGrid = document.getElementById('testimonialGrid');
 
+// Curated fallback so the section is never blank if Supabase is unreachable
+// (project paused, RLS blocking, network down) or returns zero approved rows.
+const FALLBACK_TESTIMONIALS = [
+  {
+    review_text: "Akshay consistently delivered high-quality code on tight deadlines. His ability to bridge frontend and backend work made him an invaluable part of our team.",
+    reviewer_name: "Former Colleague",
+    relationship: "Ecomtent",
+    star_rating: 5,
+  },
+  {
+    review_text: "He took our project from concept to production faster than expected. Great communicator, proactive problem solver, and always willing to go the extra mile.",
+    reviewer_name: "Project Manager",
+    relationship: "Events365 Canada",
+    star_rating: 5,
+  },
+  {
+    review_text: "Akshay picked up our Power Platform stack quickly and shipped automations that saved hours of manual work each week. Detail-oriented and dependable.",
+    reviewer_name: "Team Lead",
+    relationship: "Collaborator",
+    star_rating: 5,
+  },
+];
+
+function renderTestimonials(reviews) {
+  testimonialGrid.innerHTML = reviews.map(r => {
+    const rating = r.star_rating || 5;
+    const stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
+    return `
+    <blockquote class="testimonial-card">
+      <div class="testimonial-card__stars">${stars}</div>
+      <p class="testimonial-card__text">"${escapeHtml(r.review_text)}"</p>
+      <div class="testimonial-card__author">
+        <div class="testimonial-card__avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div>
+          <cite class="testimonial-card__name">${escapeHtml(r.reviewer_name)}</cite>
+          <span class="testimonial-card__role">${escapeHtml(r.relationship)}</span>
+        </div>
+      </div>
+    </blockquote>
+  `;}).join('');
+}
+
 if (testimonialGrid) {
   (async function () {
     try {
-      // Fetch testimonials (3 instead of 2)
       const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?approved=eq.true&order=created_at.desc&limit=3`, {
         headers: {
           'apikey': SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         },
       });
+
+      if (!res.ok) throw new Error(`Supabase returned ${res.status}`);
       const reviews = await res.json();
 
-      if (!reviews.length) return;
+      if (!Array.isArray(reviews) || reviews.length === 0) {
+        renderTestimonials(FALLBACK_TESTIMONIALS);
+        return;
+      }
 
-      testimonialGrid.innerHTML = reviews.map(r => {
-        const rating = r.star_rating || 5;
-        const stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
-        return `
-        <blockquote class="testimonial-card">
-          <div class="testimonial-card__stars">${stars}</div>
-          <p class="testimonial-card__text">"${escapeHtml(r.review_text)}"</p>
-          <div class="testimonial-card__author">
-            <div class="testimonial-card__avatar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <div>
-              <cite class="testimonial-card__name">${escapeHtml(r.reviewer_name)}</cite>
-              <span class="testimonial-card__role">${escapeHtml(r.relationship)}</span>
-            </div>
-          </div>
-        </blockquote>
-      `;}).join('');
+      renderTestimonials(reviews);
 
       // Fetch total count for badge
       const countRes = await fetch(`${SUPABASE_URL}/rest/v1/reviews?approved=eq.true&select=id`, {
@@ -376,8 +407,9 @@ if (testimonialGrid) {
           }
         }
       }
-    } catch {
-      // fallback — leave grid empty
+    } catch (err) {
+      console.warn('Reviews fetch failed, rendering fallback:', err);
+      renderTestimonials(FALLBACK_TESTIMONIALS);
     }
   })();
 }
