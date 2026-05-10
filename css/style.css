@@ -138,6 +138,16 @@ body:hover .cursor-glow {
   color: #4285F4;
 }
 
+/* YouTube variant */
+.google-reviews-card--youtube:hover {
+  border-color: rgba(255, 0, 0, 0.4);
+  box-shadow: 0 6px 24px rgba(255, 0, 0, 0.12);
+}
+
+.google-reviews-card--youtube:hover .google-reviews-card__arrow {
+  color: #FF0000;
+}
+
 /* ===== RESET & BASE ===== */
 *,
 *::before,
@@ -1749,6 +1759,40 @@ img {
   border: 1px solid var(--color-border);
   padding: 0.2rem 0.5rem;
   border-radius: 5px;
+}
+
+/* External links inside an experience card (e.g. YouTube, Google reviews) */
+.exp-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+}
+
+.exp-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.exp-card__link:hover {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
+}
+
+.exp-card__link svg {
+  flex-shrink: 0;
+  color: #a78bfa;
 }
 
 /* ===== EDUCATION ===== */

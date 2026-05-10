@@ -7,9 +7,9 @@
 
   // ── CONFIG ──
   const RESUMES = {
-    powerplatform: "Sharma_Akshay_Resume_PowerPlatform.pdf",
-    fullstack: "Sharma_Akshay_Resume_FullStack.pdf",
-    guest: "Sharma_Akshay_Resume.pdf",
+    powerplatform: "Sharma_Akshay_Power_Platform_Resume.pdf",
+    fullstack: "SHARMA_AKSHAY_FULLSTACK_DEVELOPER_RESUME.pdf",
+    guest: "Sharma_Akshay_Power_Platform_Resume.pdf",
   };
 
   const ROLE_LABELS = {
