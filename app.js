@@ -720,3 +720,16 @@ if (shortcutsModal) {
     document.body.style.overflow = '';
   });
 }
+
+// Earlier-career experience card: client-tab switcher
+document.querySelectorAll('.exp-card--early').forEach((card) => {
+  const tabs = card.querySelectorAll('.early-client');
+  const panels = card.querySelectorAll('.early-panel');
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.client;
+      tabs.forEach((t) => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+      panels.forEach((p) => p.classList.toggle('early-panel--active', p.dataset.panel === target));
+    });
+  });
+});
